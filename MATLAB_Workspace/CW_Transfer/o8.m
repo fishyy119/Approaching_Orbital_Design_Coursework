@@ -1,3 +1,8 @@
+%% CW方程两脉冲转移2
+%
+% 本脚本使用Clohessy-Wiltshire方程计算不同转移时间下的两脉冲抵近转移。
+% 与o7类似，不过其初值需要额外推导（同一圆轨道上真近点角相差1度的飞行器）
+
 clear;
 clc;
 %% 常数
@@ -17,10 +22,10 @@ vt = [0; r * n; 0];
 
 % ===== 旋转矩阵（滞后 → 负角度）=====
 Rz = [; ...
-    cos(-dtheta), -sin(-dtheta), 0; ...
-    sin(-dtheta), cos(-dtheta), 0; ...
-    0, 0, 1; ...
-    ];
+          cos(-dtheta), -sin(-dtheta), 0; ...
+          sin(-dtheta), cos(-dtheta), 0; ...
+          0, 0, 1; ...
+      ];
 
 % ===== 追踪航天器（惯性系）=====
 rc = Rz * rt;
@@ -107,29 +112,6 @@ legend('T=1000s', 'T=2000s', 'T=3000s');
 title('CW Transfer Trajectories');
 axis equal;
 %%
-function [Phi_rr, Phi_rv, Phi_vr, Phi_vv] = cw_stm(n, t)
-
-nt = n * t;
-s = sin(nt);
-c = cos(nt);
-
-Phi_rr = [4 - 3 * c, 0, 0; ...
-    6 * (s - nt), 1, 0; ...
-    0, 0, c];
-
-Phi_rv = [s / n, 2 * (1 - c) / n, 0; ...
-    2 * (c - 1) / n, (4 * s - 3 * nt) / n, 0; ...
-    0, 0, s / n];
-
-Phi_vr = [3 * n * s, 0, 0; ...
-    6 * n * (c - 1), 0, 0; ...
-    0, 0, -n * s];
-
-Phi_vv = [c, 2 * s, 0; ...
-    -2 * s, 4 * c - 3, 0; ...
-    0, 0, c];
-
-end
 
 function traj = generate_trajectory(n, r0, v0_plus, T, steps)
 

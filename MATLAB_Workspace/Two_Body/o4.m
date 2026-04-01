@@ -1,3 +1,8 @@
+%% 轨道参数反解
+%
+% 本脚本通过两个已知轨道点的位置和真近点角，反解椭圆轨道参数。
+% 计算偏心率、半通径、半长轴等轨道要素及相关物理量。
+
 clc;
 clear;
 %% 已知参数
@@ -10,7 +15,7 @@ f1 = deg2rad(126);
 f2 = deg2rad(58);
 %% 求解 e 与 p
 A = [r1 * cos(f1), -1; ...
-    r2 * cos(f2), -1];
+         r2 * cos(f2), -1];
 
 b = [-r1; -r2];
 
@@ -25,25 +30,25 @@ rp = a * (1 - e);
 %% 近地点高度 (地球半径6378km)
 hp = rp - Re;
 %% 轨道周期
-T = 2 * pi * sqrt(a^3/mu);
+T = 2 * pi * sqrt(a^3 / mu);
 %% 最大最小速度
 ra = a * (1 + e);
 
-v_max = sqrt(mu*(2 / rp - 1 / a));
-v_min = sqrt(mu*(2 / ra - 1 / a));
+v_max = sqrt(mu * (2 / rp - 1 / a));
+v_min = sqrt(mu * (2 / ra - 1 / a));
 %% 两点弦长
-c = sqrt(r1^2+r2^2-2*r1*r2*cos(f1-f2));
+c = sqrt(r1^2 + r2^2 - 2 * r1 * r2 * cos(f1 - f2));
 %% 输出
 fprintf("偏心率 e = %.4f\n", e)
 fprintf("近地点高度 hp = %.2f km\n", hp)
 fprintf("半长轴 a = %.2f km\n", a)
-fprintf("周期 T = %.2f s (%.2f min)\n", T, T/60)
+fprintf("周期 T = %.2f s (%.2f min)\n", T, T / 60)
 fprintf("最大速度 = %.3f km/s\n", v_max)
 fprintf("最小速度 = %.3f km/s\n", v_min)
 fprintf("两点弦长 = %.2f km\n", c)
 %% 绘图
 
-f = linspace(0, 2*pi, 1000);
+f = linspace(0, 2 * pi, 1000);
 r = p ./ (1 + e * cos(f));
 
 x = r .* cos(f);
@@ -57,7 +62,6 @@ y1 = r1 * sin(f1);
 
 x2 = r2 * cos(f2);
 y2 = r2 * sin(f2);
-
 
 figure
 plot(x, y, 'b', 'LineWidth', 2)
