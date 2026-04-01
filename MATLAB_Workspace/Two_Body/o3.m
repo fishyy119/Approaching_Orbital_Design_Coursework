@@ -1,3 +1,7 @@
+%% 轨道转移3
+%
+% 计算单次脉冲改变近地点幅角所需的速度增量。
+
 clear
 clc
 %% 常数
@@ -33,15 +37,16 @@ for i = 1:2
     [r1, v1] = state(fi, 0);
 
     % 新轨道
-    [r2, v2] = state(fi - domega,domega);
+    [r2, v2] = state(fi - domega, domega);
 
-    dv(i) = norm(v2-v1);
+    dv(i) = norm(v2 - v1);
 
     fprintf('交点 %d\n', i)
     fprintf('r = %.2f km\n', norm(r1))
     fprintf('dv = %.5f km/s\n\n', dv(i))
 
 end
+
 %% 绘图
 
 % 近地点辐角
@@ -49,17 +54,17 @@ omega1 = 0;
 omega2 = deg2rad(60);
 
 % 真近点角
-f = linspace(0, 2*pi, 1000);
+f = linspace(0, 2 * pi, 1000);
 
 % 轨道1
 r1 = p ./ (1 + e * cos(f));
-x1 = r1 .* cos(f+omega1);
-y1 = r1 .* sin(f+omega1);
+x1 = r1 .* cos(f + omega1);
+y1 = r1 .* sin(f + omega1);
 
 % 轨道2
 r2 = p ./ (1 + e * cos(f));
-x2 = r2 .* cos(f+omega2);
-y2 = r2 .* sin(f+omega2);
+x2 = r2 .* cos(f + omega2);
+y2 = r2 .* sin(f + omega2);
 
 figure
 hold on
@@ -75,7 +80,7 @@ xlabel('x (km)')
 ylabel('y (km)')
 
 legend('Original Orbit', 'Rotated Orbit', 'Earth')
-%%
+
 function [r_vec, v_vec] = orbit_state(f, omega, p, e, mu)
 
 r = p / (1 + e * cos(f));
@@ -83,12 +88,12 @@ r = p / (1 + e * cos(f));
 % PQW坐标
 r_pqw = [r * cos(f); r * sin(f); 0];
 
-v_pqw = sqrt(mu/p) * [-sin(f); e + cos(f); 0];
+v_pqw = sqrt(mu / p) * [-sin(f); e + cos(f); 0];
 
 % 旋转矩阵
 R = [cos(omega), -sin(omega), 0; ...
-    sin(omega), cos(omega), 0; ...
-    0, 0, 1];
+         sin(omega), cos(omega), 0; ...
+         0, 0, 1];
 
 r_vec = R * r_pqw;
 v_vec = R * v_pqw;

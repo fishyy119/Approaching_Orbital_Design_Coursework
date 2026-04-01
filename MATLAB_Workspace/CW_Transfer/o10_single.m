@@ -1,3 +1,8 @@
+%% 多段脉冲转移仿真
+%
+% 本脚本进行多段脉冲推力的轨道转移仿真。
+% 使用简单的等比数列生成中间脉冲点
+
 clear;
 clc;
 
@@ -27,7 +32,7 @@ dt = T / N;
 r_cur = r0;
 v_cur = v0;
 
-DV = zeros(3, N+1); % 记录脉冲
+DV = zeros(3, N + 1); % 记录脉冲
 
 traj_r = r_cur;
 
@@ -38,7 +43,7 @@ for k = 1:N
     [Phi_rr, Phi_rv, Phi_vr, Phi_vv] = cw_stm(n, dt);
 
     % 目标点
-    r_target = r_seq(:, k+1);
+    r_target = r_seq(:, k + 1);
 
     % 计算 Δv
     dv = Phi_rv \ (r_target - Phi_rr * r_cur - Phi_rv * v_cur);
@@ -58,7 +63,8 @@ for k = 1:N
     traj_r = [traj_r, r_cur];
 
 end
-DV(:, N+1) = vf - v_cur;
+
+DV(:, N + 1) = vf - v_cur;
 
 %% 输出
 disp("总ΔV：");
@@ -66,45 +72,22 @@ disp(sum(vecnorm(DV)));
 
 plot_trajectory_cw(traj_r, r_seq, n, dt);
 %%
-function [Phi_rr, Phi_rv, Phi_vr, Phi_vv] = cw_stm(n, t)
-
-nt = n * t;
-s = sin(nt);
-c = cos(nt);
-
-Phi_rr = [4 - 3 * c, 0, 0; ...
-    6 * (s - nt), 1, 0; ...
-    0, 0, c];
-
-Phi_rv = [s / n, 2 * (1 - c) / n, 0; ...
-    2 * (c - 1) / n, (4 * s - 3 * nt) / n, 0; ...
-    0, 0, s / n];
-
-Phi_vr = [3 * n * s, 0, 0; ...
-    6 * n * (c - 1), 0, 0; ...
-    0, 0, -n * s];
-
-Phi_vv = [c, 2 * s, 0; ...
-    -2 * s, 4 * c - 3, 0; ...
-    0, 0, c];
-
-end
 
 function [r_seq, v_seq] = gen_geometric_waypoints(r0, v0, rf, vf, N, q)
 
-r_seq = zeros(3, N+1);
-v_seq = zeros(3, N+1);
+r_seq = zeros(3, N + 1);
+v_seq = zeros(3, N + 1);
 
 for k = 0:N
 
-    if abs(q-1) < 1e-8
+    if abs(q - 1) < 1e-8
         alpha = k / N; % 等距（退化情况）
     else
         alpha = (q^k - 1) / (q^N - 1); % 等比
     end
 
-    r_seq(:, k+1) = r0 + alpha * (rf - r0);
-    v_seq(:, k+1) = v0 + alpha * (vf - v0);
+    r_seq(:, k + 1) = r0 + alpha * (rf - r0);
+    v_seq(:, k + 1) = v0 + alpha * (vf - v0);
 end
 
 end
@@ -127,7 +110,7 @@ for k = 1:N
 
     % 当前段起点状态
     r0 = traj_r(:, k);
-    r1 = traj_r(:, k+1);
+    r1 = traj_r(:, k + 1);
 
     % ⚠️ 关键：需要恢复该段初始速度
     % 用差分反推 v（仅用于绘图，不影响主逻辑）
@@ -144,6 +127,7 @@ for k = 1:N
 
         traj_dense = [traj_dense, r_s];
     end
+
 end
 
 plot3(traj_dense(1, :), traj_dense(2, :), traj_dense(3, :), ...

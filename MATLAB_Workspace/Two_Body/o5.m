@@ -1,3 +1,8 @@
+%% 霍曼转移交会仿真
+%
+% 仿真霍曼转移轨道交会问题。
+% 给定允许交会误差，计算交会所需的等待时间和转移参数，动画显示追踪器与目标的相对运动。
+
 clc;
 clear;
 
@@ -14,26 +19,29 @@ rt = Re + 1000; % 目标圆轨道
 a0 = (rp + ra) / 2;
 e0 = (ra - rp) / (ra + rp);
 %% 平均角速度
-nc = sqrt(mu/a0^3); % 初始卫星
-nt = sqrt(mu/rt^3); % 目标卫星
+nc = sqrt(mu / a0^3); % 初始卫星
+nt = sqrt(mu / rt^3); % 目标卫星
 %% 霍曼转移参数
 if transfer == 1
     aT = (rp + rt) / 2;
     eT = (rt - rp) / (rt + rp);
 else
-
     eT = (rt - ra) / (rt + ra);
     aT = (ra + rt) / 2;
 end
-tT = pi * sqrt(aT^3/mu); % 半圈飞行时间
+
+tT = pi * sqrt(aT^3 / mu); % 半圈飞行时间
 %% 1 交会时允许目标真近点角范围
-dtheta = acos((2 * rt^2 - tol^2)/(2 * rt^2)); % 或近似 dtheta = tol/rt
+dtheta = acos((2 * rt^2 - tol^2) / (2 * rt^2)); % 或近似 dtheta = tol/rt
+
 if transfer == 1
     theta_f_min = pi - dtheta;
     theta_f_max = pi + dtheta;
 else
     theta_f_min = -dtheta;
-    theta_f_max = dtheta; end
+    theta_f_max = dtheta;
+end
+
 %% 2 倒推机动时刻目标允许角度
 theta0_min = theta_f_min - nt * tT;
 theta0_max = theta_f_max - nt * tT;
@@ -42,6 +50,7 @@ theta_c0 = 0; % 追踪器初始真近点角
 theta_t0 = pi; % 目标初始真近点角
 %% 3 遍历拱点计算等待时间
 Tc = 2 * pi / nc; % 追踪器轨道周期
+
 if transfer == 1
     t_a0 = 0; % 第一次到达远地点（拱点）时间
 else
@@ -59,18 +68,20 @@ for k = 0:max_iter
     theta_t = theta_t0 + nt * tw;
 
     % 归一化到 [-pi, pi]
-    theta_t = mod(theta_t+pi, 2*pi) - pi;
+    theta_t = mod(theta_t + pi, 2 * pi) - pi;
 
     % 检查是否在允许角度范围
     if theta_t >= theta0_min && theta_t <= theta0_max
         t_wait = tw;
         break
     end
+
 end
 
 if isnan(t_wait)
     error('没有找到满足条件的等待时间，请检查参数或增加 max_iter');
 end
+
 %% 输出
 result.wait_time = t_wait;
 result.transfer_time = tT;
@@ -95,7 +106,7 @@ t_end = t_wait + tT + 2000;
 % N = 50000;
 % t = linspace(0, t_end, N);
 N = 1000;
-t = linspace(t_wait-9000, t_end, N);
+t = linspace(t_wait - 9000, t_end, N);
 
 rc = zeros(N, 2);
 rtg = zeros(N, 2);
@@ -103,8 +114,8 @@ rtg = zeros(N, 2);
 theta_c0 = 0;
 theta_t0 = pi;
 
-nc = sqrt(mu/a0^3);
-nt = sqrt(mu/rt^3);
+nc = sqrt(mu / a0^3);
+nt = sqrt(mu / rt^3);
 
 for i = 1:N
 
@@ -125,14 +136,14 @@ for i = 1:N
         % 转移轨道
         tau = ti - t_wait;
 
-        nT = sqrt(mu/aT^3);
+        nT = sqrt(mu / aT^3);
 
         M = nT * tau;
 
         E = kepler(M, eT);
 
-        theta = 2 * atan2(sqrt(1+eT)*sin(E/2), ...
-            sqrt(1-eT)*cos(E/2));
+        theta = 2 * atan2(sqrt(1 + eT) * sin(E / 2), ...
+            sqrt(1 - eT) * cos(E / 2));
 
         r = aT * (1 - eT * cos(E));
 
@@ -156,6 +167,7 @@ for i = 1:N
     rc(i, 2) = r * sin(theta_c);
 
 end
+
 %% 绘图
 
 figure
@@ -170,7 +182,6 @@ traj_t = animatedline('Color', 'r', 'LineWidth', 1.5);
 % 当前卫星位置
 sat_c = plot(NaN, NaN, 'bo', 'MarkerSize', 8, 'MarkerFaceColor', 'b');
 sat_t = plot(NaN, NaN, 'ro', 'MarkerSize', 8, 'MarkerFaceColor', 'r');
-
 
 xlabel('km')
 ylabel('km')
@@ -198,10 +209,11 @@ for i = 1:N
 
 end
 
-
 function E = kepler(M, e)
 E = M;
+
 for k = 1:10
     E = E - (E - e * sin(E) - M) / (1 - e * cos(E));
 end
+
 end

@@ -1,8 +1,13 @@
+%% CW方程两脉冲转移1
+%
+% 本脚本使用Clohessy-Wiltshire方程计算两脉冲轨道转移。
+% 通过指定初始和终端状态，计算轨道转移所需的脉冲Δv。
+
 clear; clc;
 
 %% 常数
-mu = 3.986e14;         % 地球引力常数
-Re = 6371e3;           
+mu = 3.986e14; % 地球引力常数
+Re = 6371e3;
 h = 1000e3;
 r = Re + h;
 
@@ -50,46 +55,22 @@ for k = 1:length(times)
 end
 
 figure; hold on; grid on;
-colors = ['r','g','b'];
+colors = ['r', 'g', 'b'];
 
 for k = 1:length(results)
     T = results(k).T;
     traj = generate_trajectory(n, r0, results(k).v0_plus, T, 200);
 
-    plot(traj(1,:), traj(2,:), colors(k), 'LineWidth', 1.5);
+    plot(traj(1, :), traj(2, :), colors(k), 'LineWidth', 1.5);
 end
 
 xlabel('x (m)');
 ylabel('y (m)');
-legend('T=1000s','T=2000s','T=3000s');
+legend('T=1000s', 'T=2000s', 'T=3000s');
 title('CW Transfer Trajectories');
 axis equal;
 
 %%
-function [Phi_rr, Phi_rv, Phi_vr, Phi_vv] = cw_stm(n, t)
-
-nt = n * t;
-s = sin(nt);
-c = cos(nt);
-
-Phi_rr = [4-3*c, 0, 0;
-          6*(s-nt), 1, 0;
-          0, 0, c];
-
-Phi_rv = [s/n, 2*(1-c)/n, 0;
-          2*(c-1)/n, (4*s-3*nt)/n, 0;
-          0, 0, s/n];
-
-Phi_vr = [3*n*s, 0, 0;
-          6*n*(c-1), 0, 0;
-          0, 0, -n*s];
-
-Phi_vv = [c, 2*s, 0;
-         -2*s, 4*c-3, 0;
-          0, 0, c];
-
-end
-
 function traj = generate_trajectory(n, r0, v0_plus, T, steps)
 
 tspan = linspace(0, T, steps);
