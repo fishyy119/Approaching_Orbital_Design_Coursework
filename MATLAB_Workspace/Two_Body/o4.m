@@ -5,12 +5,13 @@
 
 clc;
 clear;
+utils.setDefaultGraphics();
 %% 已知参数
-Re = 6378; % km
-mu = 398600; % km^3/s^2
+Re = 6378137; % m
+mu = 3.986004418e14; % m^3/s^2
 
-r1 = 1545 + Re; % km
-r2 = 852 + Re; % km
+r1 = 1545e3 + Re; % m
+r2 = 852e3 + Re; % m
 f1 = deg2rad(126);
 f2 = deg2rad(58);
 %% 求解 e 与 p
@@ -27,7 +28,7 @@ p = x(2);
 a = p / (1 - e^2);
 %% 近地点距离
 rp = a * (1 - e);
-%% 近地点高度 (地球半径6378km)
+%% 近地点高度
 hp = rp - Re;
 %% 轨道周期
 T = 2 * pi * sqrt(a^3 / mu);
@@ -40,12 +41,12 @@ v_min = sqrt(mu * (2 / ra - 1 / a));
 c = sqrt(r1^2 + r2^2 - 2 * r1 * r2 * cos(f1 - f2));
 %% 输出
 fprintf("偏心率 e = %.4f\n", e)
-fprintf("近地点高度 hp = %.2f km\n", hp)
-fprintf("半长轴 a = %.2f km\n", a)
+fprintf("近地点高度 hp = %.2f m\n", hp)
+fprintf("半长轴 a = %.2f m\n", a)
 fprintf("周期 T = %.2f s (%.2f min)\n", T, T / 60)
-fprintf("最大速度 = %.3f km/s\n", v_max)
-fprintf("最小速度 = %.3f km/s\n", v_min)
-fprintf("两点弦长 = %.2f km\n", c)
+fprintf("最大速度 = %.3f m/s\n", v_max)
+fprintf("最小速度 = %.3f m/s\n", v_min)
+fprintf("两点弦长 = %.2f m\n", c)
 %% 绘图
 
 f = linspace(0, 2 * pi, 1000);
@@ -63,7 +64,7 @@ y1 = r1 * sin(f1);
 x2 = r2 * cos(f2);
 y2 = r2 * sin(f2);
 
-figure
+utils.createFigureA4();
 plot(x, y, 'b', 'LineWidth', 2)
 hold on
 
@@ -78,6 +79,6 @@ text(x2, y2, '  Point 2')
 axis equal
 grid on
 
-xlabel('x (km)')
-ylabel('y (km)')
+xlabel('x (m)')
+ylabel('y (m)')
 title('Elliptical Orbit')

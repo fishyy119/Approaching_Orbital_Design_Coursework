@@ -5,10 +5,11 @@
 
 clear;
 clc;
+utils.setDefaultGraphics();
 
 %% 常数
-mu = 3.986e14;
-Re = 6371e3;
+mu = 3.986004418e14;
+Re = 6378137;
 h = 1000e3;
 r = Re + h;
 
@@ -39,7 +40,7 @@ for i = 1:length(N_list)
 
 end
 
-figure;
+utils.createFigureA4();
 imagesc(q_list, N_list, DV_map);
 colorbar;
 xlabel('q');

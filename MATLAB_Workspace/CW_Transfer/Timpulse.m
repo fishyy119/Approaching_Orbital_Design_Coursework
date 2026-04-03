@@ -9,12 +9,13 @@
 
 clear;
 clc;
+utils.setDefaultGraphics();
 %% 参数
 sim_case = 1;
 N = 5;
 
-mu = 3.986e14;
-Re = 6371e3;
+mu = 3.986004418e14;
+Re = 6378137;
 
 if sim_case == 1
     h = 1000e3;
@@ -64,7 +65,7 @@ param.path_type = line;
 results = struct();
 
 % 绘图
-figure;
+utils.createFigureA4();
 hold on;
 grid on;
 
@@ -81,7 +82,7 @@ for i = 1:length(types)
 end
 
 legend(types);
-title('不同rho调度策略对比');
+title(utils.formatMixedFontText('不同rho调度策略对比'));
 % 控制台输出
 disp("==== 统计结果 ====");
 

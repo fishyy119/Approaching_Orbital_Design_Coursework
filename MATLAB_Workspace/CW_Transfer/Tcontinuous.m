@@ -8,10 +8,11 @@
 
 clear;
 clc;
+utils.setDefaultGraphics();
 
 %% 参数定义
-mu = 3.986e14; % 地球引力常数
-Re = 6371e3; % 地球半径
+mu = 3.986004418e14; % 地球引力参数
+Re = 6378137; % 地球半径
 h1 = 1000e3; % 航天器1高度
 h2 = 990e3; % 航天器2高度
 r1 = Re + h1;
@@ -90,16 +91,16 @@ for k = 1:N
 end
 
 %% 绘图
-figure;
+utils.createFigureA4();
 plot(x_hist(1, :), x_hist(2, :), 'b', 'LineWidth', 2);
 hold on;
 plot(x_t(1, :), x_t(2, :), 'r--', 'LineWidth', 1.5);
-legend('航天器1轨迹', '航天器2轨迹');
+legend(utils.formatMixedFontText({'航天器1轨迹', '航天器2轨迹'}));
 xlabel('X');
 ylabel('Y');
 grid on;
 
-figure;
+utils.createFigureA4();
 plot(time, u_hist(1:2, :), 'LineWidth', 2);
 legend('u_x', 'u_y');
 xlabel('Time (s)');

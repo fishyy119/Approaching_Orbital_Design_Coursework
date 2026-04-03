@@ -3,10 +3,11 @@
 % 接o8，遍历转移时间范围，计算并比较不同时间下的总Δv，找到最优解。
 
 clear; clc;
+utils.setDefaultGraphics();
 
 %% 常数
-mu = 3.986e14; % 地球引力常数
-Re = 6371e3;
+mu = 3.986004418e14; % 地球引力参数
+Re = 6378137;
 h = 1000e3;
 r = Re + h;
 
@@ -71,7 +72,8 @@ fprintf('最优转移时间 T = %.2f s\n', T_opt);
 fprintf('最小总 Δv = %.4f m/s\n', dv_opt);
 
 %% 绘制 Δv 曲线
-figure; hold on; grid on;
+utils.createFigureA4();
+hold on; grid on;
 plot(T_list / 60, dv1_norm, 'r', 'LineWidth', 1.5);
 plot(T_list / 60, dv2_norm, 'b', 'LineWidth', 1.5);
 plot(T_list / 60, dv_total, 'k', 'LineWidth', 2);

@@ -4,12 +4,13 @@
 
 clear
 clc
+utils.setDefaultGraphics()
 %% 常数
-mu = 398600; % km^3/s^2
-Re = 6378; % km
+mu = 3.986004418e14; % m^3/s^2
+Re = 6378137; % m
 %% 轨道参数
-hp = 400; % 近地点高度 km
-ha = 600; % 远地点高度 km
+hp = 400e3; % 近地点高度 m
+ha = 600e3; % 远地点高度 m
 
 rp = Re + hp;
 ra = Re + ha;
@@ -42,8 +43,8 @@ for i = 1:2
     dv(i) = norm(v2 - v1);
 
     fprintf('交点 %d\n', i)
-    fprintf('r = %.2f km\n', norm(r1))
-    fprintf('dv = %.5f km/s\n\n', dv(i))
+    fprintf('r = %.2f m\n', norm(r1))
+    fprintf('dv = %.5f m/s\n\n', dv(i))
 
 end
 
@@ -66,7 +67,7 @@ r2 = p ./ (1 + e * cos(f));
 x2 = r2 .* cos(f + omega2);
 y2 = r2 .* sin(f + omega2);
 
-figure
+utils.createFigureA4();
 hold on
 axis equal
 grid on
@@ -76,8 +77,8 @@ plot(x2, y2, 'g', 'LineWidth', 2)
 
 plot(0, 0, 'ro', 'MarkerSize', 8, 'MarkerFaceColor', 'r')
 
-xlabel('x (km)')
-ylabel('y (km)')
+xlabel('x (m)')
+ylabel('y (m)')
 
 legend('Original Orbit', 'Rotated Orbit', 'Earth')
 
