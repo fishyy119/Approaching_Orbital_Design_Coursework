@@ -13,12 +13,12 @@ end
 
 %%
 function ocase(tcase)
-R_e = 6378; % km
-mu_e = 398600; % km^3/s^2
-h_11 = 400; % km
-h_12 = 600; % km
-h_21 = 800; % km
-h_22 = 1000; % km
+R_e = 6378137; % m
+mu_e = 3.986004418e14; % m^3/s^2
+h_11 = 400e3; % m
+h_12 = 600e3; % m
+h_21 = 800e3; % m
+h_22 = 1000e3; % m
 
 a_1 = R_e + (h_11 + h_12) / 2;
 a_2 = R_e + (h_21 + h_22) / 2;
@@ -53,7 +53,7 @@ v_21 = ra2v(t_2, a_e, mu_e);
 d1 = v_12 - v_1;
 d2 = v_2 - v_21;
 fprintf('------------------------\n%s\n', tip)
-fprintf('dv_1 = %f\n', d1)
-fprintf('dv_2 = %f\n', d2)
-fprintf('sum = %f\n', abs(d1) + abs(d2))
+fprintf('dv_1 = %.6f m/s\n', d1)
+fprintf('dv_2 = %.6f m/s\n', d2)
+fprintf('sum = %.6f m/s\n', abs(d1) + abs(d2))
 end

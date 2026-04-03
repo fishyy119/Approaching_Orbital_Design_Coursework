@@ -4,10 +4,11 @@
 % 通过指定初始和终端状态，计算轨道转移所需的脉冲Δv。
 
 clear; clc;
+utils.setDefaultGraphics();
 
 %% 常数
-mu = 3.986e14; % 地球引力常数
-Re = 6371e3;
+mu = 3.986004418e14; % 地球引力参数
+Re = 6378137;
 h = 1000e3;
 r = Re + h;
 
@@ -54,7 +55,8 @@ for k = 1:length(times)
     fprintf("Total Δv = %f m/s\n\n", results(k).dv_total);
 end
 
-figure; hold on; grid on;
+utils.createFigureA4();
+hold on; grid on;
 colors = ['r', 'g', 'b'];
 
 for k = 1:length(results)

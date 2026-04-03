@@ -5,10 +5,11 @@
 
 clear;
 clc;
+utils.setDefaultGraphics();
 
 %% 常数
-mu = 3.986e14;
-Re = 6371e3;
+mu = 3.986004418e14;
+Re = 6378137;
 h = 1000e3;
 r = Re + h;
 
@@ -96,7 +97,7 @@ end
 
 function plot_trajectory_cw(traj_r, r_seq, n, dt)
 
-figure;
+utils.createFigureA4();
 hold on;
 grid on;
 axis equal;
@@ -143,8 +144,8 @@ xlabel('x (m)');
 ylabel('y (m)');
 zlabel('z (m)');
 
-legend('轨迹', '中间点（直线插值）', '起点', '终点');
+legend(utils.formatMixedFontText({'轨迹', '中间点（直线插值）', '起点', '终点'}));
 
-title('CW多脉冲分段转移轨迹');
+title(utils.formatMixedFontText('CW多脉冲分段转移轨迹'));
 
 end

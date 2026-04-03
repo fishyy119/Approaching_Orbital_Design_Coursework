@@ -7,14 +7,15 @@
 %   - 计算f、g函数及其导数
 
 clear; clc;
+utils.setDefaultGraphics();
 
 %% 常数
-mu = 398600; % km^3/s^2
-Re = 6378; % km
+mu = 3.986004418e14; % m^3/s^2
+Re = 6378137; % m
 
 %% 轨道参数
-rp = Re + 400;
-ra = Re + 600;
+rp = Re + 400e3;
+ra = Re + 600e3;
 
 a = (rp + ra) / 2;
 e = (ra - rp) / (ra + rp);
@@ -53,7 +54,7 @@ for i = 1:length(dtheta)
 end
 
 %% 绘图
-figure;
+utils.createFigureA4();
 
 subplot(2, 2, 1);
 plot(dtheta, f, 'LineWidth', 1.5);

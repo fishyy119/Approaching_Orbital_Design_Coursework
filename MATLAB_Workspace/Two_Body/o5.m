@@ -5,16 +5,17 @@
 
 clc;
 clear;
+utils.setDefaultGraphics();
 
 transfer = 2;
 %% 常量
-mu = 398600; % 地球引力常数 km^3/s^2
-Re = 6378; % 地球半径 km
-tol = 100; % 允许交会误差 km
+mu = 3.986004418e14; % 地球引力参数 m^3/s^2
+Re = 6378137; % 地球半径 m
+tol = 100e3; % 允许交会误差 m
 %% 轨道半径
-rp = Re + 400; % 初始近地点
-ra = Re + 600; % 初始远地点
-rt = Re + 1000; % 目标圆轨道
+rp = Re + 400e3; % 初始近地点
+ra = Re + 600e3; % 初始远地点
+rt = Re + 1000e3; % 目标圆轨道
 %% 初始轨道参数
 a0 = (rp + ra) / 2;
 e0 = (ra - rp) / (ra + rp);
@@ -170,7 +171,7 @@ end
 
 %% 绘图
 
-figure
+utils.createFigureA4();
 hold on
 axis equal
 grid on
@@ -183,12 +184,12 @@ traj_t = animatedline('Color', 'r', 'LineWidth', 1.5);
 sat_c = plot(NaN, NaN, 'bo', 'MarkerSize', 8, 'MarkerFaceColor', 'b');
 sat_t = plot(NaN, NaN, 'ro', 'MarkerSize', 8, 'MarkerFaceColor', 'r');
 
-xlabel('km')
-ylabel('km')
+xlabel('m')
+ylabel('m')
 title('Rendezvous Animation')
 
-xlim([-12000, 12000])
-ylim([-12000, 12000])
+xlim([-1.2e7, 1.2e7])
+ylim([-1.2e7, 1.2e7])
 
 %% 逐帧播放
 

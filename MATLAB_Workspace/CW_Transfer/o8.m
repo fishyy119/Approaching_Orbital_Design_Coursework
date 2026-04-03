@@ -5,9 +5,10 @@
 
 clear;
 clc;
+utils.setDefaultGraphics();
 %% 常数
-mu = 3.986e14; % 地球引力常数
-Re = 6371e3;
+mu = 3.986004418e14; % 地球引力参数
+Re = 6378137;
 h = 1000e3;
 r = Re + h;
 
@@ -94,7 +95,7 @@ for k = 1:length(times)
     fprintf("Total Δv = %f m/s\n\n", results(k).dv_total);
 end
 
-figure;
+utils.createFigureA4();
 hold on;
 grid on;
 colors = ['r', 'g', 'b'];
