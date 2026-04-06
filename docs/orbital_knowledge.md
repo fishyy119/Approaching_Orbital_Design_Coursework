@@ -42,6 +42,7 @@
 - 对于远程转移，机动脉冲定义为出发脉冲与到达脉冲：
   - `Delta v1 = v1 - v0`
   - `Delta v2 = vf - v2`
+- 当前仓库中的 `MATLAB_Workspace/Final_Project/Remote_Guidance/lambert_universal_2d.m` 仅实现零圈（`0-rev`）Lambert；其中 `short/long` 仅表示单圈内的几何两支，不表示多圈 Lambert。
 
 因此，本仓库中与 `f/g`、轨道递推、两点转移相关的内容，应优先对齐这一套 Lambert/Lagrange 写法。
 
@@ -181,6 +182,14 @@ TH 模型的核心结论是：
 
 这一部分是从几何和状态量回推轨道根数的基础，也是后续处理 PQW、LVLH、惯性系等转换的上游理论来源。
 
+对于二维轨道上的 LVLH / 轨道坐标系构造，若已知目标的惯性系状态 `(r_t, v_t)`，更稳妥的做法是：
+
+- 径向基向量取 `e_r = r_t / |r_t|`。
+- 切向基向量由角动量方向确定，二维情形可写为 `e_theta = sign(h_z) * [-e_r_y; e_r_x]`，其中 `h_z = r_t_x * v_t_y - r_t_y * v_t_x`。
+- 瞬时角速度应取 `theta_dot = h_z / |r_t|^2`。
+
+因此，在数值传播或非严格圆轨道状态下，不应简单用 `v_t / |v_t|` 充当切向基，也不应把 `|v_t| / |r_t|` 直接当作 LVLH 角速度。
+
 #### 2.2.5 时间函数与开普勒方程
 
 补充课件最后给出椭圆轨道时间函数、偏近点角/平近点角以及开普勒方程。关键作用是：
@@ -227,7 +236,19 @@ TH 模型的核心结论是：
 | `MATLAB_Workspace/CW_Transfer/Tcontinuous.m` | 主课件 85-95 | 连续推力抵近与 LQR 误差反馈控制。 |
 | `MATLAB_Workspace/CW_Transfer/o11.m` | 主课件 62、97-101 | 基于 CW 的平面自然绕飞轨道两脉冲插入搜索。 |
 | `MATLAB_Workspace/CW_Transfer/o12.m` | 主课件 114-119 | 基于课件水滴悬停公式的周期闭合轨道设计与周期比扫描。 |
-
+| `MATLAB_Workspace/Final_Project/Remote_Guidance/remote_guidance_main.m` | 主课件 39-50；补充二体 37-45 | 二维共面远程导引主脚本，直接在初始椭圆轨道上搜索 `t_d-Delta t` Lambert 窗口，并按实际转移弧段最低高度筛选安全可行解。 |
+| `MATLAB_Workspace/Final_Project/Remote_Guidance/elliptic_to_target_circular_dv_reference.m` | 补充二体 19-27 | 计算初始椭圆轨道从近地点或远地点发起与目标圆轨道相切转移时的参考速度增量。 |
+| `MATLAB_Workspace/Final_Project/Remote_Guidance/target_state_circular_2d.m` | 补充二体 19-27、37-45 | 目标圆轨道在二维惯性系中的解析状态表达。 |
+| `MATLAB_Workspace/Final_Project/Remote_Guidance/chaser_state_elliptic_2d.m` | 补充二体 19-27、37-45 | 共面椭圆轨道跟踪器的时间函数传播与二维状态解算。 |
+| `MATLAB_Workspace/Final_Project/Remote_Guidance/solve_kepler_ellipse.m` | 补充二体 37-45 | 椭圆轨道开普勒方程牛顿迭代。 |
+| `MATLAB_Workspace/Final_Project/Remote_Guidance/capture_state_from_target_2d.m` | 主课件 51-62 | 将目标 LVLH 中的捕获点 `[0,-5 km,0]^T` 转换到二维惯性系。 |
+| `MATLAB_Workspace/Final_Project/Remote_Guidance/lambert_universal_2d.m` | 主课件 40-49 | 二维 Lambert 通用变量求解，当前仅实现零圈（`0-rev`）Lambert，并支持单圈内的几何 short-way / long-way 两支。 |
+| `MATLAB_Workspace/Final_Project/Remote_Guidance/transfer_arc_min_radius_2d.m` | 补充二体 19-27 | 仅针对当前零圈 Lambert 的单圈 short-way / long-way 弧段，按轨道要素解析判断弧段是否经过近地点，并计算最小半径。 |
+| `MATLAB_Workspace/Final_Project/Remote_Guidance/simulate_impulsive_remote_guidance_2d.m` | 主课件 39-50；补充二体 37-45 | 按机动事件与二维两体动力学对等待段和转移段做 ode113 数值递推校核。 |
+| `MATLAB_Workspace/Final_Project/Remote_Guidance/plot_remote_guidance_window_contours.m` | 主课件 39-50 | 绘制远程导引 Lambert 搜索窗口的自适应等高线图。 |
+| `MATLAB_Workspace/Final_Project/Remote_Guidance/plot_remote_guidance_trajectory_2d.m` | 主课件 39-50；补充二体 19-27 | 绘制最优远程导引窗口对应的等待段与转移段轨迹。 |
+| `MATLAB_Workspace/Final_Project/Remote_Guidance/render_remote_guidance_animation_2d.m` | 主课件 39-50；补充二体 19-27 | 渲染最优远程导引窗口对应的二维数值转移动画。 |
+| `MATLAB_Workspace/Final_Project/Proximity_Guidance/proximity_guidance_main.m` | 主课件 60-78 | 近距离导引占位脚本，后续用于接入 CW 阶段。 |
 ## 四、主课件页码速览（按连续页合并）
 
 对应文件：`docs/课程PPT_2025-2026学年第二学期.pdf`
@@ -307,3 +328,32 @@ TH 模型的核心结论是：
 - 第三节只负责说明“脚本做什么、对应哪块课件”。
 - 第四、五节是页码导航；后续若 PDF 更新，应同步调整页码范围。
 - 若新增脚本，请先补第三节映射，再判断是否需要补充第二节的理论摘要。
+
+## 七、综合大作业当前实现约定
+
+### 7.1 远程导引段的二维共面简化
+
+- 当前综合大作业第一阶段仅实现远程导引段，不实现近距离 CW 抵近设计。
+- 目标圆轨道与跟踪器初始椭圆轨道被限定在同一轨道平面内，代码实现退化为惯性系 `x-y` 平面二维问题。
+- 在该实现中，惯性系 `x` 轴沿跟踪器初始椭圆轨道近地点方向，目标初始相位角与跟踪器初始真近点角分别独立给定。
+- 跟踪器状态直接由椭圆轨道时间函数 `M-E-theta` 推进得到，不通过 PQW 到惯性系的三维旋转变换。
+
+### 7.2 捕获点定义
+
+- 远程导引的 Lambert 终端点不取目标飞行器质心，而取目标 LVLH 坐标系中的固定捕获点 `rho_cap^L = [0, -5 km, 0]^T`。
+- 实现时先由目标圆轨道状态构造 LVLH 基，再把该捕获点转换到惯性系，作为 Lambert 两点边值问题的终点位置。
+- 终端速度同样按 LVLH 捕获点的运动学关系转换到惯性系，用于计算到达脉冲 `Delta v2`。
+
+### 7.3 当前 Lambert 求解范围
+
+- `MATLAB_Workspace/Final_Project/Remote_Guidance/lambert_universal_2d.m` 当前只求解零圈（`0-rev`）Lambert。
+- 函数中的 `short` 与 `long` 仅表示零圈解中的几何 short-way / long-way 两支，不包含多圈 Lambert 的圈数枚举。
+- 当前实现没有显式的 revolution-count 输入，也不会为同一组 `r1-r2-Delta t` 搜索多圈解族。
+- 若后续任务需要多圈 Lambert，应单独扩展求解器的分支定义、`z` 搜索区间与主脚本结果记录结构。
+
+### 7.4 远程导引段安全筛选判据
+
+- Lambert 窗口的安全性不再按整条转移轨道的全局近地点筛选，而是按实际从 `r1` 飞到 `r2` 的那一段转移弧段最低高度筛选。
+- 若转移弧段内径向速度从负值过渡到正值，则说明该弧段穿过近地点，弧段最小半径取该转移轨道近地点半径。
+- 若转移弧段不穿过近地点，则弧段最小半径取出发点与到达点半径的较小值；未飞经的轨道部分不参与安全约束判定。
+- 综合大作业当前安全约束写为 `r_min,arc >= Re + h_safe`。

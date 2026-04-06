@@ -47,7 +47,6 @@ function text_out = format_one_text(text_in, english_font_name, chinese_font_nam
 
 text_out = ['\fontname{', english_font_name, '}'];
 use_chinese_font = false;
-
 for i = 1:length(text_in)
     ch = text_in(i);
 

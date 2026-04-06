@@ -119,14 +119,14 @@ clim([dv_vis_min, dv_vis_cap]);
 
 cb = colorbar;
 cb.Label.String = utils.formatMixedFontText( ...
-    sprintf('显示用截断后 \\Delta v (m/s), cap = %.1f', dv_vis_cap));
+    sprintf('显示用截断后 \\Delta{\\itv} (m/s), cap = %.1f', dv_vis_cap));
 
 scatter(stats.T_opt / 60, stats.theta_opt * 180 / pi, ...
     45, 'w', 'filled', 'MarkerEdgeColor', 'k');
 
 xlabel('Transfer Time (min)');
 ylabel('\theta_f (deg)');
-title(utils.formatMixedFontText('二维搜索下的总 \Delta v 分布（高值已截断）'));
+title(utils.formatMixedFontText('二维搜索下的总 \Delta{\itv} 分布（高值已截断）'));
 
 %% 绘图：每个时间对应的最优终端相位
 utils.createFigureA4();
@@ -137,8 +137,8 @@ plot(T_list / 60, stats.dv_min_over_theta, 'k', 'LineWidth', 1.5);
 scatter(stats.T_opt / 60, stats.dv_total_opt, 45, 'k', 'filled');
 
 xlabel('Transfer Time (min)');
-ylabel('Min \Delta v over \theta_f (m/s)');
-title(utils.formatMixedFontText('对终端相位取最优后的 \Delta v-T 曲线'));
+ylabel('Min \Delta{\itv} over \theta_f (m/s)');
+title(utils.formatMixedFontText('对终端相位取最优后的 \Delta{\itv}-T 曲线'));
 
 %% 局部函数
 function stats = analyze_transfer_2d(n, R0, V0, k, yc, T_list, theta_list)
