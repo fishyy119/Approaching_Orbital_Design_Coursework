@@ -83,7 +83,7 @@ subplot(2, 2, 1);
 plot(scan_stats.alpha, scan_stats.single_dv, 'o-', 'LineWidth', 1.5);
 grid on;
 xlabel('\alpha');
-ylabel('Single-cycle \Delta v (m/s)');
+ylabel('Single-cycle \Delta{\itv} (m/s)');
 title(utils.formatMixedFontText('单次机动速度增量'));
 
 subplot(2, 2, 2);
@@ -91,7 +91,7 @@ plot(scan_stats.alpha, scan_stats.total_dv_per_target_orbit, ...
     'o-', 'LineWidth', 1.5);
 grid on;
 xlabel('\alpha');
-ylabel('Total \Delta v per target orbit (m/s)');
+ylabel('Total \Delta{\itv} per target orbit (m/s)');
 title(utils.formatMixedFontText('目标轨道周期总速度增量'));
 
 subplot(2, 2, 3);
