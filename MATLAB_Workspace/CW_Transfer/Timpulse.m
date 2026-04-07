@@ -193,7 +193,7 @@ for k = 1:N
 end
 
 DV(:, N + 1) = vf - v_cur;
-DV_sum = sum(vecnorm(DV));
+DV_sum = sum(vecnorm(DV, 2, 1));
 
 end
 

@@ -66,7 +66,7 @@ rho_cap_L = [0; -5e3]; % LVLH 捕获点
 rhodot_cap_L = [0; 0]; % 先对准为静止捕获点
 %% 搜索网格
 td_min = 0;
-td_max = 12 * target.T;
+td_max = 1.5 * target.T;
 dt_min = 10 * 60;
 dt_max = 1.2 * target.T;
 td_step = 60;

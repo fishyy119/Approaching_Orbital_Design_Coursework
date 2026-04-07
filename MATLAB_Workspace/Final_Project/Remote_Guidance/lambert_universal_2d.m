@@ -119,75 +119,28 @@ if abs(F_ref) < tol_F
     return;
 end
 
-step = 0.25;
+step_init = 0.25;
 
 if F_ref < 0
-    z_low = z_ref;
-
-    for k = 1:40
-        z_high = min(z_low + step, z_pos_limit);
-        [F_high, y_high, valid_high] = lambert_residual( ...
-            z_high, r1_norm, r2_norm, A, dt, mu);
-        iterations = iterations + 1;
-
-        if valid_high
-            if abs(F_high) < tol_F
-                z = z_high;
-                y = y_high;
-                converged = true;
-                return;
-            end
-
-            if F_high >= 0
-                break;
-            end
-
-            z_low = z_high;
-        end
-
-        if z_high >= z_pos_limit
-            return;
-        end
-
-        step = 2 * step;
-    end
+    [z_low, z_high, iterations, bracketed, converged, z, y] = ...
+        expand_bracket_from_reference( ...
+            z_ref, step_init, 1, z_pos_limit, 40, tol_F, ...
+            r1_norm, r2_norm, A, dt, mu, iterations);
 else
-    z_high = z_ref;
+    [z_low, z_high, iterations, bracketed, converged, z, y] = ...
+        expand_bracket_from_reference( ...
+            z_ref, step_init, -1, z_neg_limit, 50, tol_F, ...
+            r1_norm, r2_norm, A, dt, mu, iterations);
+end
 
-    for k = 1:50
-        z_low = max(z_high - step, z_neg_limit);
-        [F_low, y_low, valid_low] = lambert_residual( ...
-            z_low, r1_norm, r2_norm, A, dt, mu);
-        iterations = iterations + 1;
-
-        if valid_low
-            if abs(F_low) < tol_F
-                z = z_low;
-                y = y_low;
-                converged = true;
-                return;
-            end
-
-            if F_low <= 0
-                break;
-            end
-
-            z_high = z_low;
-        end
-
-        if z_low <= z_neg_limit
-            return;
-        end
-
-        step = 2 * step;
-    end
+if converged || ~bracketed
+    return;
 end
 
 for k = 1:80
     z_mid = 0.5 * (z_low + z_high);
-    [F_mid, y_mid, valid_mid] = lambert_residual( ...
-        z_mid, r1_norm, r2_norm, A, dt, mu);
-    iterations = iterations + 1;
+    [F_mid, y_mid, valid_mid, iterations] = evaluate_lambert_residual( ...
+        z_mid, r1_norm, r2_norm, A, dt, mu, iterations);
 
     if ~valid_mid
         return;
@@ -210,6 +163,77 @@ end
 
 end
 
+function [z_low, z_high, iterations, bracketed, converged, z_root, y_root] = ...
+    expand_bracket_from_reference( ...
+        z_ref, step_init, direction, z_limit, max_iter, tol_F, ...
+        r1_norm, r2_norm, A, dt, mu, iterations)
+% expand_bracket_from_reference 从参考点单侧扩界，直到获得可二分的括界。
+%
+% 约定：
+%   1. direction = 1 时，从 F(z_ref) < 0 的参考点向正方向搜索，目标是找到 F >= 0。
+%   2. direction = -1 时，从 F(z_ref) > 0 的参考点向负方向搜索，目标是找到 F <= 0。
+
+z_low = nan;
+z_high = nan;
+bracketed = false;
+converged = false;
+z_root = nan;
+y_root = nan;
+step = step_init;
+
+if direction > 0
+    z_low = z_ref;
+else
+    z_high = z_ref;
+end
+
+for k = 1:max_iter
+    if direction > 0
+        z_trial = min(z_low + step, z_limit);
+    else
+        z_trial = max(z_high - step, z_limit);
+    end
+
+    [F_trial, y_trial, valid_trial, iterations] = evaluate_lambert_residual( ...
+        z_trial, r1_norm, r2_norm, A, dt, mu, iterations);
+
+    if valid_trial
+        if abs(F_trial) < tol_F
+            z_root = z_trial;
+            y_root = y_trial;
+            converged = true;
+            return;
+        end
+
+        if direction > 0
+            if F_trial >= 0
+                z_high = z_trial;
+                bracketed = true;
+                return;
+            end
+
+            z_low = z_trial;
+        else
+            if F_trial <= 0
+                z_low = z_trial;
+                bracketed = true;
+                return;
+            end
+
+            z_high = z_trial;
+        end
+    end
+
+    if (direction > 0 && z_trial >= z_limit) || ...
+            (direction < 0 && z_trial <= z_limit)
+        return;
+    end
+
+    step = 2 * step;
+end
+
+end
+
 function [z_ref, F_ref, y_ref, iterations, valid_ref] = find_valid_reference_z( ...
     r1_norm, r2_norm, A, dt, mu, z_pos_limit)
 % find_valid_reference_z 从 z = 0 起搜索第一个可用参考点。
@@ -222,9 +246,8 @@ valid_ref = false;
 step = 0.25;
 
 for k = 1:20
-    [F_ref, y_ref, valid_ref] = lambert_residual( ...
-        z_ref, r1_norm, r2_norm, A, dt, mu);
-    iterations = iterations + 1;
+    [F_ref, y_ref, valid_ref, iterations] = evaluate_lambert_residual( ...
+        z_ref, r1_norm, r2_norm, A, dt, mu, iterations);
 
     if valid_ref
         return;
@@ -237,6 +260,15 @@ for k = 1:20
 
     step = 2 * step;
 end
+
+end
+
+function [F, y, valid, iterations] = evaluate_lambert_residual( ...
+    z, r1_norm, r2_norm, A, dt, mu, iterations)
+% evaluate_lambert_residual 计算残差并累计一次函数评估计数。
+
+[F, y, valid] = lambert_residual(z, r1_norm, r2_norm, A, dt, mu);
+iterations = iterations + 1;
 
 end
 

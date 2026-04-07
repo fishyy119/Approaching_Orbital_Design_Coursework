@@ -33,7 +33,7 @@ dt = T / N;
 r_cur = r0;
 v_cur = v0;
 
-DV = zeros(3, N + 1); % 记录脉冲
+DV = zeros(3, N + 1); % 记录各次脉冲速度矢量
 
 traj_r = r_cur;
 
@@ -69,7 +69,7 @@ DV(:, N + 1) = vf - v_cur;
 
 %% 输出
 disp("总ΔV：");
-disp(sum(vecnorm(DV)));
+disp(sum(vecnorm(DV, 2, 1)));
 
 plot_trajectory_cw(traj_r, r_seq, n, dt);
 %%
