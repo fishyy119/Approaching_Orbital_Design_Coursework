@@ -248,7 +248,16 @@ TH 模型的核心结论是：
 | `MATLAB_Workspace/Final_Project/Remote_Guidance/plot_remote_guidance_window_contours.m` | 主课件 39-50 | 绘制远程导引 Lambert 搜索窗口的自适应等高线图。 |
 | `MATLAB_Workspace/Final_Project/Remote_Guidance/plot_remote_guidance_trajectory_2d.m` | 主课件 39-50；补充二体 19-27 | 绘制最优远程导引窗口对应的等待段与转移段轨迹。 |
 | `MATLAB_Workspace/Final_Project/Remote_Guidance/render_remote_guidance_animation_2d.m` | 主课件 39-50；补充二体 19-27 | 渲染最优远程导引窗口对应的二维数值转移动画。 |
-| `MATLAB_Workspace/Final_Project/Proximity_Guidance/proximity_guidance_main.m` | 主课件 60-78 | 近距离导引占位脚本，后续用于接入 CW 阶段。 |
+| `MATLAB_Workspace/+utils/plotContourMap2D.m` | 主课件 39-50、72-78、97-101 | 远程/近距离导引共用的二维自适应等高线绘图工具。 |
+| `MATLAB_Workspace/Final_Project/Proximity_Guidance/proximity_guidance_main.m` | 主课件 60-78、97-101 | 综合大作业近距离导引主脚本，对 `N`、`drho0`、`drhoT` 与第三象限切入相位做四维搜索，并默认输出起止调度导数归并等高线图。 |
+| `MATLAB_Workspace/+utils/buildGradedList.m` | 主课件 72-78 | 按分段变密度规则生成一维搜索参数列表。 |
+| `MATLAB_Workspace/Final_Project/Proximity_Guidance/cw_stm_2d.m` | 主课件 60-62 | 近距离导引本地使用的二维共面 CW 状态转移矩阵分块实现。 |
+| `MATLAB_Workspace/Final_Project/Proximity_Guidance/proximity_reference_orbit_state_2d.m` | 主课件 97-101 | 生成平面绕飞轨道在 LVLH 系中的相对位置与速度。 |
+| `MATLAB_Workspace/Final_Project/Proximity_Guidance/proximity_search_multimpulse_plan_2d.m` | 主课件 72-78、97-101 | 对 `N`、`drho0`、`drhoT` 与切入相位做四维网格搜索，并生成二维归并代价面。 |
+| `MATLAB_Workspace/Final_Project/Proximity_Guidance/proximity_solve_line_multimpulse_2d.m` | 主课件 72-78 | 用直线指数趋近律和 CW 状态转移矩阵求解二维多脉冲抵近，其中 `rho(t)` 调度公式与 `CW_Transfer/Timpulse.m` 的指数型实现保持一致。 |
+| `MATLAB_Workspace/Final_Project/Proximity_Guidance/simulate_impulsive_proximity_guidance_2d.m` | 主课件 60-62、72-78；补充二体 37-45 | 在惯性系下按脉冲事件对目标与跟踪器做 ode113 数值递推，回到 LVLH 系统计解析误差，并把切入后绕飞段拼接进全程验证结果。 |
+| `MATLAB_Workspace/Final_Project/Proximity_Guidance/plot_proximity_search_contours_2d.m` | 主课件 72-78、97-101 | 绘制近距离导引参数搜索结果的二维归并总脉冲等高线图。 |
+| `MATLAB_Workspace/Final_Project/Proximity_Guidance/plot_proximity_guidance_trajectory_2d.m` | 主课件 60-62、72-78 | 绘制 LVLH 相对系下的近距离转移与切入后绕飞轨迹。 |
 ## 四、主课件页码速览（按连续页合并）
 
 对应文件：`docs/课程PPT_2025-2026学年第二学期.pdf`
@@ -331,9 +340,9 @@ TH 模型的核心结论是：
 
 ## 七、综合大作业当前实现约定
 
-### 7.1 远程导引段的二维共面简化
+### 7.1 远程与近距离导引的二维共面简化
 
-- 当前综合大作业第一阶段仅实现远程导引段，不实现近距离 CW 抵近设计。
+- 当前综合大作业的远程导引段与近距离导引段都限定在二维共面场景下实现。
 - 目标圆轨道与跟踪器初始椭圆轨道被限定在同一轨道平面内，代码实现退化为惯性系 `x-y` 平面二维问题。
 - 在该实现中，惯性系 `x` 轴沿跟踪器初始椭圆轨道近地点方向，目标初始相位角与跟踪器初始真近点角分别独立给定。
 - 跟踪器状态直接由椭圆轨道时间函数 `M-E-theta` 推进得到，不通过 PQW 到惯性系的三维旋转变换。
@@ -357,3 +366,18 @@ TH 模型的核心结论是：
 - 若转移弧段内径向速度从负值过渡到正值，则说明该弧段穿过近地点，弧段最小半径取该转移轨道近地点半径。
 - 若转移弧段不穿过近地点，则弧段最小半径取出发点与到达点半径的较小值；未飞经的轨道部分不参与安全约束判定。
 - 综合大作业当前安全约束写为 `r_min,arc >= Re + h_safe`。
+
+### 7.5 近距离导引段的当前实现约定
+
+- 近距离导引段不依赖远程导引搜索得到的数值终端，而是直接把硬编码捕获点 `rho_0^L = [0, -5 km]^T`、初始相对速度 `v_0^L = [0, 0]^T` 作为初始相对状态。
+- 终端参考轨道采用平面绕飞轨道 `x = k * sin(theta)`、`y = 2 * k * cos(theta) + y_c`；算例默认取无偏置 `y_c = 0`，但代码保留 `y_c` 参数接口。
+- 初期曾在目标后方半弧内做过相位扫描，发现最优切入相位几乎不落在第四象限，因此当前默认把搜索区间缩到第三象限，即 `theta in [pi, 3pi/2]`。
+- 当前近距离导引外层搜索变量扩展为四个：脉冲段数 `N`、起点调度导数 `drho0`、终点调度导数 `drhoT` 与切入相位 `theta`。
+- 为了在有限网格点数下提高敏感区域分辨率，`drho0` 与 `drhoT` 默认使用分段变密度列表，而不是单一均匀步长。
+- 对每个候选四元组，先由参考绕飞轨道得到切入点位置和速度，再用直线路径、指数趋近律与 CW 状态转移矩阵求解多段脉冲抵近；其中 `rho(t)` 与 `T_total` 的指数型计算形式与 `CW_Transfer/Timpulse.m` 保持一致。
+- 当前实现中的 `drho0`、`drhoT` 用于构造标量距离调度律与节点分布，是趋近律调度参数；实际每段段首脉冲仍由“命中下一节点位置”这一位置约束反解。
+- `CW_Transfer/cw_stm.m` 仍作为课程仓库中的三维规范实现保留；近距离导引目录下另有一份本地 `cw_stm_2d.m`，直接输出二维共面 `2x2` 分块，供近距离导引脚本调用。
+- 为避免仅在 CW 解析模型下“看起来合理”而在惯性系数值积分中产生明显漂移，当前实现对总转移时间施加上限，超过上限的候选解直接判为不可行。
+- 绘图时对未展示的两个维度逐点取最优值归并；当前默认只输出 `drho0-drhoT` 总脉冲等高线图，相位相关的两张归并图不再默认绘制。
+- 解析设计完成后，数值校核在惯性系中对目标与跟踪器分别使用 `ode113` 推进，并在每个采样时刻回到 LVLH 系，和 CW 解析相对轨迹逐点比较位置与速度误差；末端切入脉冲施加后，还会继续做一段无控传播，检查是否保持在目标绕飞轨道附近，并把该绕飞段拼接进全程误差统计与轨迹输出。
+- 近距离主脚本当前默认只输出静态图，不默认渲染动画；默认绘制一张参数归并等高线图和一张相对系转移与切入后绕飞轨迹图。
