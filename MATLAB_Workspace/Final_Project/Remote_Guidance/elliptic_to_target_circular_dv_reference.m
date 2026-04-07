@@ -17,11 +17,11 @@ Re = 6378137; % m
 
 %% 任务场景参数
 target = struct();
-target.radius = Re + 1000e3; % 目标圆轨道半径
+target.radius = Re +1000e3; % 目标圆轨道半径
 
 chaser = struct();
-chaser.rp = Re + 400e3; % 初始椭圆轨道近地点半径
-chaser.ra = Re + 600e3; % 初始椭圆轨道远地点半径
+chaser.rp = Re +400e3; % 初始椭圆轨道近地点半径
+chaser.ra = Re +600e3; % 初始椭圆轨道远地点半径
 chaser.a = (chaser.rp + chaser.ra) / 2;
 chaser.e = (chaser.ra - chaser.rp) / (chaser.ra + chaser.rp);
 
@@ -118,21 +118,16 @@ end
 function print_transfer_case(case_info)
 % print_transfer_case 输出单个拱点机动方案的参考结果。
 
-fprintf('%s机动参考：\n', char(case_info.case_label));
+fprintf('%s转移：\n', char(case_info.case_label));
 fprintf('  机动点半径 = %.3f km\n', case_info.maneuver_radius / 1e3);
-fprintf('  初始轨道速度 = %.6f m/s\n', case_info.initial_speed);
-fprintf('  转移轨道起点速度 = %.6f m/s\n', case_info.transfer_speed_departure);
-fprintf('  起点脉冲 Δv = %.6f m/s (signed = %.6f m/s)\n', ...
-    case_info.dv_departure, case_info.dv_departure_signed);
-fprintf('  转移轨道终点速度 = %.6f m/s\n', case_info.transfer_speed_arrival);
-fprintf('  目标圆轨道速度 = %.6f m/s\n', case_info.target_speed);
-fprintf('  末端圆化 Δv = %.6f m/s (signed = %.6f m/s)\n', ...
-    case_info.dv_arrival, case_info.dv_arrival_signed);
-fprintf('  总 Δv = %.6f m/s\n', case_info.dv_total);
 fprintf('  转移半长轴 = %.3f km\n', case_info.transfer_a / 1e3);
 fprintf('  转移偏心率 = %.6f\n', case_info.transfer_e);
 fprintf('  转移飞行时间 = %.3f min\n', case_info.transfer_time / 60);
-fprintf('  起点角色 = %s\n', char(case_info.departure_role));
-fprintf('  终点角色 = %s\n\n', char(case_info.arrival_role));
+fprintf('  起点脉冲 Δv = %.6f m/s (signed = %.6f m/s)\n', ...
+    case_info.dv_departure, case_info.dv_departure_signed);
+fprintf('  末端圆化 Δv = %.6f m/s (signed = %.6f m/s)\n', ...
+    case_info.dv_arrival, case_info.dv_arrival_signed);
+fprintf('  总 Δv = %.6f m/s\n', case_info.dv_total);
+fprintf('\n');
 
 end
