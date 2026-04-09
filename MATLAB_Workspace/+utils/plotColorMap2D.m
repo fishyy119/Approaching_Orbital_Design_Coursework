@@ -1,5 +1,5 @@
-function plot_info = plotContourMap2D(x_list, y_list, value_map, config)
-% plotContourMap2D 绘制仓库共用的二维自适应等高线图。
+function plot_info = plotColorMap2D(x_list, y_list, value_map, config)
+% plotColorMap2D 绘制仓库共用的二维自适应颜色图。
 %
 % 输入：
 %   x_list        横轴参数网格。
@@ -8,19 +8,19 @@ function plot_info = plotContourMap2D(x_list, y_list, value_map, config)
 %   config        绘图配置结构体。
 %
 % 输出：
-%   plot_info     图窗、坐标轴、颜色条与等高线信息结构体。
+%   plot_info     图窗、坐标轴、颜色条与颜色图信息结构体。
 
 arguments
     x_list (1,:) double
     y_list (1,:) double
     value_map double
-    config (1,1) struct {mustBeContourMapConfig}
+    config (1,1) struct {mustBeColorMapConfig}
 end
 
 if ~ismatrix(value_map) ...
         || size(value_map, 1) ~= numel(y_list) ...
         || size(value_map, 2) ~= numel(x_list)
-    error('utils.plotContourMap2D:InvalidMapSize', ...
+    error('utils.plotColorMap2D:InvalidMapSize', ...
         'value_map 的尺寸必须为 numel(y_list) x numel(x_list)。');
 end
 
@@ -30,39 +30,40 @@ fig = utils.createFigureA4(struct( ...
     'AspectRatio', config.aspect_ratio));
 ax = axes('Parent', fig);
 
-contour_map = value_map;
-valid_data = contour_map(isfinite(contour_map));
+color_map = value_map;
+valid_data = color_map(isfinite(color_map));
 [x_grid, y_grid] = meshgrid(x_list * config.x_scale, y_list * config.y_scale);
-has_contour_plot = false;
+has_color_plot = false;
 
 if ~isempty(valid_data)
-    contour_info = buildAdaptiveContourLevels( ...
+    color_info = buildAdaptiveColorLevels( ...
         valid_data, config.display_upper_limit, config.level_count);
-    contour_map(contour_map > contour_info.display_max) = nan;
+    color_map(color_map > color_info.display_max) = nan;
 
-    if contour_info.has_data
-        contour(ax, x_grid, y_grid, contour_map, ...
-            contour_info.levels, ...
-            'LineWidth', config.contour_width);
+    if color_info.has_data
+        surface(ax, x_grid, y_grid, zeros(size(color_map)), color_map, ...
+            'EdgeColor', 'none', ...
+            'FaceColor', 'interp');
         hold(ax, 'on');
+        view(ax, 2);
 
-        if contour_info.display_max > contour_info.display_min
-            clim(ax, [contour_info.display_min, contour_info.display_max]);
+        if color_info.display_max > color_info.display_min
+            clim(ax, [color_info.display_min, color_info.display_max]);
         end
 
-        has_contour_plot = true;
+        has_color_plot = true;
     else
-        warning('绝对显示上限 %.4f 以下无可绘制的等高线数据。', ...
+        warning('绝对显示上限 %.4f 以下无可绘制的颜色图数据。', ...
             config.display_upper_limit);
     end
 else
-    contour_info = struct( ...
+    color_info = struct( ...
         'levels', nan, ...
         'display_min', nan, ...
         'display_max', nan, ...
         'cap_applied', false, ...
         'has_data', false);
-    warning('等高线图无可用数据可绘制。');
+    warning('颜色图无可用数据可绘制。');
 end
 
 set(ax, 'YDir', 'normal');
@@ -73,10 +74,11 @@ xlim(ax, [x_grid(1, 1), x_grid(1, end)]);
 ylim(ax, [y_grid(1, 1), y_grid(end, 1)]);
 utils.applyViridisColormap(256, false);
 
-if has_contour_plot
+if has_color_plot
     cb = colorbar(ax);
-    [cb.Ticks, cb.TickLabels] = buildColorbarTicks( ...
-        contour_info.levels, config.colorbar_tick_count_max);
+    [cb.Ticks, cb.TickLabels] = buildUniformColorbarTicks( ...
+        color_info.display_min, color_info.display_max, ...
+        config.colorbar_tick_count_max);
     cb.Label.String = utils.formatMixedFontText(char(config.colorbar_label));
 else
     cb = [];
@@ -90,13 +92,13 @@ plot_info = struct();
 plot_info.fig = fig;
 plot_info.ax = ax;
 plot_info.colorbar = cb;
-plot_info.contour_info = contour_info;
-plot_info.has_contour_plot = has_contour_plot;
+plot_info.color_info = color_info;
+plot_info.has_color_plot = has_color_plot;
 
 end
 
-function mustBeContourMapConfig(config)
-% mustBeContourMapConfig 校验共用等高线图配置结构体。
+function mustBeColorMapConfig(config)
+% mustBeColorMapConfig 校验共用颜色图配置结构体。
 
 schema = { ...
     'figure_name', utils.schema.textScalar(); ...
@@ -110,21 +112,20 @@ schema = { ...
     'y_scale', utils.schema.doubleScalar('positive'); ...
     'display_upper_limit', utils.schema.doubleScalar('positive'); ...
     'level_count', utils.schema.doubleScalar('integer', 'positive'); ...
-    'contour_width', utils.schema.doubleScalar('positive'); ...
     'colorbar_tick_count_max', utils.schema.doubleScalar('integer', 'positive')};
 
 utils.schema.validateStruct(config, schema, 'config');
 
 end
 
-function contour_info = buildAdaptiveContourLevels(data, display_upper_limit, level_count_target)
-% buildAdaptiveContourLevels 生成带绝对上限的自适应等高线级别。
+function color_info = buildAdaptiveColorLevels(data, display_upper_limit, level_count_target)
+% buildAdaptiveColorLevels 生成带绝对上限的自适应颜色图级别。
 
 data = sort(data(:));
 data = data(isfinite(data));
 
 if isempty(data)
-    contour_info = struct( ...
+    color_info = struct( ...
         'levels', nan, ...
         'display_min', nan, ...
         'display_max', nan, ...
@@ -137,7 +138,7 @@ full_max = data(end);
 data_in_range = data(data <= display_upper_limit);
 
 if isempty(data_in_range)
-    contour_info = struct( ...
+    color_info = struct( ...
         'levels', nan, ...
         'display_min', nan, ...
         'display_max', min(full_max, display_upper_limit), ...
@@ -166,7 +167,7 @@ else
     end
 end
 
-contour_info = struct( ...
+color_info = struct( ...
     'levels', levels, ...
     'display_min', display_min, ...
     'display_max', display_max, ...
@@ -175,28 +176,25 @@ contour_info = struct( ...
 
 end
 
-function [tick_values, tick_labels] = buildColorbarTicks(levels, tick_count_max)
-% buildColorbarTicks 为颜色条抽样主刻度，避免标签重叠。
+function [tick_values, tick_labels] = buildUniformColorbarTicks( ...
+    display_min, display_max, tick_count_max)
+% buildUniformColorbarTicks 为颜色条生成均匀分布的主刻度。
 
-tick_values = unique(levels(:).');
-tick_values = tick_values(isfinite(tick_values));
-
-if isempty(tick_values)
+if ~isfinite(display_min) || ~isfinite(display_max)
+    tick_values = [];
     tick_labels = {};
     return;
 end
 
 tick_count_max = max(2, round(tick_count_max));
 
-if numel(tick_values) > tick_count_max
-    tick_index = unique(round(linspace(1, numel(tick_values), tick_count_max)));
-    tick_values = tick_values(tick_index);
-end
-
-if numel(tick_values) >= 2
+if display_max > display_min
+    tick_values = linspace(display_min, display_max, tick_count_max);
+    tick_values = unique(tick_values);
     tick_step = min(diff(tick_values));
 else
-    tick_step = max(abs(tick_values(1)), 1);
+    tick_values = display_min;
+    tick_step = max(abs(display_min), 1);
 end
 
 if tick_step >= 10

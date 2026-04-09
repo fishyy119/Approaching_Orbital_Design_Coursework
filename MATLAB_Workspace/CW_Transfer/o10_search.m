@@ -45,7 +45,7 @@ imagesc(q_list, N_list, DV_map);
 colorbar;
 xlabel('q');
 ylabel('N');
-title('Total \DeltaV landscape');
+utils.applyPlotTitle(gca, 'Total \DeltaV landscape');
 
 %%
 function total_dv = eval_total_dv(r0, v0, rf, vf, n, T, N, q)

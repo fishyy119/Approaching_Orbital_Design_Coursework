@@ -82,7 +82,7 @@ for i = 1:length(types)
 end
 
 legend(types);
-title(utils.formatMixedFontText('不同rho调度策略对比'));
+utils.applyPlotTitle(gca, utils.formatMixedFontText('不同rho调度策略对比'));
 % 控制台输出
 disp("==== 统计结果 ====");
 

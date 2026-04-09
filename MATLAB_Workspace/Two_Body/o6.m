@@ -58,21 +58,21 @@ utils.createFigureA4();
 
 subplot(2, 2, 1);
 plot(dtheta, f, 'LineWidth', 1.5);
-title('f vs \Delta\theta');
+utils.applyPlotTitle(gca, 'f vs \Delta\theta');
 xlabel('\Delta\theta (rad)'); ylabel('f');
 
 subplot(2, 2, 2);
 plot(dtheta, g, 'LineWidth', 1.5);
-title('g vs \Delta\theta');
+utils.applyPlotTitle(gca, 'g vs \Delta\theta');
 xlabel('\Delta\theta (rad)'); ylabel('g');
 
 subplot(2, 2, 3);
 plot(dtheta, fdot, 'LineWidth', 1.5);
 % plot(dtheta, fdot2, 'LineWidth', 1.5);
-title('f dot vs \Delta\theta');
+utils.applyPlotTitle(gca, 'f dot vs \Delta\theta');
 xlabel('\Delta\theta (rad)'); ylabel('fdot');
 
 subplot(2, 2, 4);
 plot(dtheta, gdot, 'LineWidth', 1.5);
-title('g dot vs \Delta\theta');
+utils.applyPlotTitle(gca, 'g dot vs \Delta\theta');
 xlabel('\Delta\theta (rad)'); ylabel('gdot');

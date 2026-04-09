@@ -1,0 +1,9 @@
+function descriptor = doubleVector(varargin)
+% doubleVector 构造 double 实数向量描述符。
+
+descriptor = struct( ...
+    'kind', "validateattributes", ...
+    'classes', {{'double'}}, ...
+    'attributes', {{'real', 'vector', varargin{:}}});
+
+end

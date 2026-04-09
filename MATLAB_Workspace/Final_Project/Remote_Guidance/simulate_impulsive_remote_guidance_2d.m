@@ -32,26 +32,26 @@ end
 [r_chaser0, v_chaser0] = chaser_state_elliptic_2d(chaser.t0, mu, chaser);
 [r_target0, v_target0] = target_state_circular_2d(target.t0, mu, target);
 
-wait_time = build_time_grid(best.td, config.wait_step);
-transfer_time = build_time_grid(best.dt, config.transfer_step);
+wait_time = fpkinematics.buildTimeGrid(best.td, config.wait_step);
+transfer_time = fpkinematics.buildTimeGrid(best.dt, config.transfer_step);
 transfer_time_abs = best.td + transfer_time;
 
-[wait_chaser_pos, wait_chaser_vel] = propagate_two_body_ode113_2d( ...
+[wait_chaser_pos, wait_chaser_vel] = fpkinematics.propagateTwoBodyOde1132D( ...
     r_chaser0, v_chaser0, wait_time, mu);
-[wait_target_pos, wait_target_vel] = propagate_two_body_ode113_2d( ...
+[wait_target_pos, wait_target_vel] = fpkinematics.propagateTwoBodyOde1132D( ...
     r_target0, v_target0, wait_time, mu);
-[wait_capture_pos, wait_capture_vel] = capture_history_from_target_2d( ...
+[wait_capture_pos, wait_capture_vel] = fpkinematics.captureHistoryFromTarget2D( ...
     wait_target_pos, wait_target_vel, rho_cap_L, rhodot_cap_L);
 
 departure_pos = wait_chaser_pos(:, end);
 departure_vel_minus = wait_chaser_vel(:, end);
 departure_vel_plus = departure_vel_minus + best.dv1_vec;
 
-[transfer_chaser_pos, transfer_chaser_vel] = propagate_two_body_ode113_2d( ...
+[transfer_chaser_pos, transfer_chaser_vel] = fpkinematics.propagateTwoBodyOde1132D( ...
     departure_pos, departure_vel_plus, transfer_time, mu);
-[transfer_target_pos, transfer_target_vel] = propagate_two_body_ode113_2d( ...
+[transfer_target_pos, transfer_target_vel] = fpkinematics.propagateTwoBodyOde1132D( ...
     wait_target_pos(:, end), wait_target_vel(:, end), transfer_time, mu);
-[transfer_capture_pos, transfer_capture_vel] = capture_history_from_target_2d( ...
+[transfer_capture_pos, transfer_capture_vel] = fpkinematics.captureHistoryFromTarget2D( ...
     transfer_target_pos, transfer_target_vel, rho_cap_L, rhodot_cap_L);
 
 mission_time = [wait_time, transfer_time_abs(2:end)];
@@ -61,9 +61,9 @@ mission_capture_pos = [wait_capture_pos, transfer_capture_pos(:, 2:end)];
 
 reference_time_target = linspace(0, target.T, config.reference_orbit_samples);
 reference_time_chaser = linspace(0, chaser.T, config.reference_orbit_samples);
-[target_reference_pos, target_reference_vel] = propagate_two_body_ode113_2d( ...
+[target_reference_pos, target_reference_vel] = fpkinematics.propagateTwoBodyOde1132D( ...
     r_target0, v_target0, reference_time_target, mu);
-[chaser_reference_pos, chaser_reference_vel] = propagate_two_body_ode113_2d( ...
+[chaser_reference_pos, chaser_reference_vel] = fpkinematics.propagateTwoBodyOde1132D( ...
     r_chaser0, v_chaser0, reference_time_chaser, mu);
 
 arrival_pos_numeric = transfer_chaser_pos(:, end);
@@ -139,101 +139,11 @@ end
 function mustBeRemoteGuidanceSimulationConfig(config)
 % mustBeRemoteGuidanceSimulationConfig 校验数值仿真配置结构体。
 
-if ~isstruct(config) || ~isscalar(config)
-    error('mustBeRemoteGuidanceSimulationConfig:InvalidType', ...
-        'config 必须为标量 struct。');
-end
+schema = { ...
+    'wait_step', utils.schema.doubleScalar('positive'); ...
+    'transfer_step', utils.schema.doubleScalar('positive'); ...
+    'reference_orbit_samples', utils.schema.doubleScalar('integer', 'positive')};
 
-required_fields = {'wait_step', 'transfer_step', 'reference_orbit_samples'};
-missing_fields = required_fields(~isfield(config, required_fields));
-if ~isempty(missing_fields)
-    error('mustBeRemoteGuidanceSimulationConfig:MissingField', ...
-        'config 缺少字段：%s', strjoin(missing_fields, ', '));
-end
-
-validateattributes(config.wait_step, {'double'}, ...
-    {'real', 'finite', 'scalar', 'positive'}, ...
-    mfilename, 'config.wait_step');
-validateattributes(config.transfer_step, {'double'}, ...
-    {'real', 'finite', 'scalar', 'positive'}, ...
-    mfilename, 'config.transfer_step');
-validateattributes(config.reference_orbit_samples, {'double'}, ...
-    {'real', 'finite', 'scalar', 'positive'}, ...
-    mfilename, 'config.reference_orbit_samples');
-mustBeInteger(config.reference_orbit_samples);
-
-end
-
-function time_grid = build_time_grid(duration, step_size)
-% build_time_grid 构造包含起终点的时间网格。
-
-if duration <= 0
-    time_grid = 0;
-    return;
-end
-
-num_samples = max(2, ceil(duration / step_size) + 1);
-time_grid = linspace(0, duration, num_samples);
-
-end
-
-function [position_history, velocity_history] = propagate_two_body_ode113_2d( ...
-    r0, v0, time_list, mu)
-% propagate_two_body_ode113_2d 用 ode113 按给定采样时刻推进二维两体轨迹。
-
-position_history = zeros(2, numel(time_list));
-velocity_history = zeros(2, numel(time_list));
-
-if isempty(time_list)
-    return;
-end
-
-position_history(:, 1) = r0;
-velocity_history(:, 1) = v0;
-
-if numel(time_list) == 1
-    return;
-end
-
-time_nodes = time_list(:);
-initial_state = [r0; v0];
-ode_options = odeset( ...
-    'RelTol', 1e-10, ...
-    'AbsTol', [1e-3, 1e-3, 1e-6, 1e-6], ...
-    'MaxStep', max(diff(time_nodes)));
-
-[~, state_history] = ode113( ...
-    @(t, state) two_body_dynamics_2d(t, state, mu), ...
-    time_nodes, initial_state, ode_options);
-
-position_history = state_history(:, 1:2).';
-velocity_history = state_history(:, 3:4).';
-
-end
-
-function state_dot = two_body_dynamics_2d(~, state, mu)
-% two_body_dynamics_2d 计算二维两体动力学状态导数。
-
-r = state(1:2);
-v = state(3:4);
-r_norm = norm(r);
-
-state_dot = zeros(4, 1);
-state_dot(1:2) = v;
-state_dot(3:4) = -mu / r_norm^3 * r;
-
-end
-
-function [capture_pos, capture_vel] = capture_history_from_target_2d( ...
-    target_pos, target_vel, rho_cap_L, rhodot_cap_L)
-% capture_history_from_target_2d 由目标状态序列生成捕获点状态序列。
-
-capture_pos = zeros(size(target_pos));
-capture_vel = zeros(size(target_vel));
-
-for i = 1:size(target_pos, 2)
-    [capture_pos(:, i), capture_vel(:, i)] = capture_state_from_target_2d( ...
-        target_pos(:, i), target_vel(:, i), rho_cap_L, rhodot_cap_L);
-end
+utils.schema.validateStruct(config, schema, 'config');
 
 end

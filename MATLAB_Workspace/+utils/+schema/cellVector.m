@@ -1,0 +1,9 @@
+function descriptor = cellVector(varargin)
+% cellVector 构造 cell 向量描述符。
+
+descriptor = struct( ...
+    'kind', "validateattributes", ...
+    'classes', {{'cell'}}, ...
+    'attributes', {{'vector', varargin{:}}});
+
+end

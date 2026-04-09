@@ -21,23 +21,10 @@ end
 function mustBeProximityReferenceOrbit(orbit)
 % mustBeProximityReferenceOrbit 校验绕飞轨道参数结构体。
 
-if ~isstruct(orbit) || ~isscalar(orbit)
-    error('mustBeProximityReferenceOrbit:InvalidType', ...
-        'orbit 必须为标量 struct。');
-end
+schema = { ...
+    'k', utils.schema.doubleScalar('positive'); ...
+    'yc', utils.schema.doubleScalar()};
 
-required_fields = {'k', 'yc'};
-missing_fields = required_fields(~isfield(orbit, required_fields));
-if ~isempty(missing_fields)
-    error('mustBeProximityReferenceOrbit:MissingField', ...
-        'orbit 缺少字段：%s', strjoin(missing_fields, ', '));
-end
-
-validateattributes(orbit.k, {'double'}, ...
-    {'real', 'finite', 'scalar', 'positive'}, ...
-    mfilename, 'orbit.k');
-validateattributes(orbit.yc, {'double'}, ...
-    {'real', 'finite', 'scalar'}, ...
-    mfilename, 'orbit.yc');
+utils.schema.validateStruct(orbit, schema, 'orbit');
 
 end

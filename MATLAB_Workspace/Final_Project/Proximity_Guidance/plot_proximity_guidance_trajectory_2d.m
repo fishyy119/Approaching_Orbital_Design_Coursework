@@ -96,7 +96,7 @@ xlim(ax, x_range_km + [-pad_x, pad_x]);
 ylim(ax, y_range_km + [-pad_y, pad_y]);
 xlabel(ax, utils.formatMixedFontText('LVLH x (km)'));
 ylabel(ax, utils.formatMixedFontText('LVLH y (km)'));
-title(ax, utils.formatMixedFontText('近距离导引与切入后绕飞轨迹'));
+utils.applyPlotTitle(ax, utils.formatMixedFontText('近距离导引与切入后绕飞轨迹'));
 legend(ax, 'Location', 'bestoutside');
 
 end

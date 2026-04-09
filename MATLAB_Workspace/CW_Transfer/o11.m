@@ -95,7 +95,7 @@ xlabel('x (m)');
 ylabel('y (m)');
 legend(utils.formatMixedFontText({'自然绕飞轨道', '最优两脉冲转移轨迹', ...
     '目标飞行器', '转移初始点', '最优插入点'}));
-title(utils.formatMixedFontText('CW 两脉冲插入平面自然绕飞轨道'));
+utils.applyPlotTitle(gca, utils.formatMixedFontText('CW 两脉冲插入平面自然绕飞轨道'));
 
 %% 绘图：二维搜索结果
 theta_deg = theta_list * 180 / pi;
@@ -126,7 +126,7 @@ scatter(stats.T_opt / 60, stats.theta_opt * 180 / pi, ...
 
 xlabel('Transfer Time (min)');
 ylabel('\theta_f (deg)');
-title(utils.formatMixedFontText('二维搜索下的总 \Delta{\itv} 分布（高值已截断）'));
+utils.applyPlotTitle(gca, utils.formatMixedFontText('二维搜索下的总 \Delta{\itv} 分布（高值已截断）'));
 
 %% 绘图：每个时间对应的最优终端相位
 utils.createFigureA4();
@@ -138,7 +138,7 @@ scatter(stats.T_opt / 60, stats.dv_total_opt, 45, 'k', 'filled');
 
 xlabel('Transfer Time (min)');
 ylabel('Min \Delta{\itv} over \theta_f (m/s)');
-title(utils.formatMixedFontText('对终端相位取最优后的 \Delta{\itv}-T 曲线'));
+utils.applyPlotTitle(gca, utils.formatMixedFontText('对终端相位取最优后的 \Delta{\itv}-T 曲线'));
 
 %% 局部函数
 function stats = analyze_transfer_2d(n, R0, V0, k, yc, T_list, theta_list)

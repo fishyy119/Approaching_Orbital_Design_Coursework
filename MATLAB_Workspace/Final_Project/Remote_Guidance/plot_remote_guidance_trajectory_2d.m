@@ -70,7 +70,7 @@ xlim(ax, simulation.axis_limit_km * [-1, 1]);
 ylim(ax, simulation.axis_limit_km * [-1, 1]);
 xlabel(ax, utils.formatMixedFontText('惯性系 {\itx} (km)'));
 ylabel(ax, utils.formatMixedFontText('惯性系 {\ity} (km)'));
-title(ax, utils.formatMixedFontText('最优 Lambert 窗口对应轨迹'));
+utils.applyPlotTitle(ax, utils.formatMixedFontText('最优 Lambert 窗口对应轨迹'));
 legend(ax, 'Location', 'bestoutside');
 
 end
