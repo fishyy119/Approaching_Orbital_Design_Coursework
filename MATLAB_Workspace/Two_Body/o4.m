@@ -81,4 +81,4 @@ grid on
 
 xlabel('x (m)')
 ylabel('y (m)')
-title('Elliptical Orbit')
+utils.applyPlotTitle(gca, 'Elliptical Orbit')

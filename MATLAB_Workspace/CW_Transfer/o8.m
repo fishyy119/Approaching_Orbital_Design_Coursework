@@ -110,7 +110,7 @@ end
 xlabel('x (m)');
 ylabel('y (m)');
 legend('T=1000s', 'T=2000s', 'T=3000s');
-title('CW Transfer Trajectories');
+utils.applyPlotTitle(gca, 'CW Transfer Trajectories');
 axis equal;
 %%
 

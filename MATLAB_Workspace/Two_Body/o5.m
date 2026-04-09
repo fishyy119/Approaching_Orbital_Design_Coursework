@@ -186,7 +186,7 @@ sat_t = plot(NaN, NaN, 'ro', 'MarkerSize', 8, 'MarkerFaceColor', 'r');
 
 xlabel('m')
 ylabel('m')
-title('Rendezvous Animation')
+utils.applyPlotTitle(gca, 'Rendezvous Animation')
 
 xlim([-1.2e7, 1.2e7])
 ylim([-1.2e7, 1.2e7])

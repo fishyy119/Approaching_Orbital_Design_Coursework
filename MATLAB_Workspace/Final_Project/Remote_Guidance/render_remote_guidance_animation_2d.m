@@ -85,7 +85,7 @@ xlim(ax, simulation.axis_limit_km * [-1, 1]);
 ylim(ax, simulation.axis_limit_km * [-1, 1]);
 xlabel(ax, utils.formatMixedFontText('惯性系 {\itx} (km)'));
 ylabel(ax, utils.formatMixedFontText('惯性系 {\ity} (km)'));
-title(ax, utils.formatMixedFontText('最优 Lambert 转移动画'));
+utils.applyPlotTitle(ax, utils.formatMixedFontText('最优 Lambert 转移动画'));
 legend(ax, 'Location', 'bestoutside');
 
 t_anim = linspace(0, simulation.mission.time(end), config.frame_count);
@@ -139,7 +139,7 @@ for i = 1:numel(t_anim)
 
     time_text = sprintf('%.1f', t_now / 60);
     title_text = ['最优 Lambert 转移动画，', phase_text, '，{\itt} = ', time_text, ' min'];
-    title(ax, utils.formatMixedFontText(title_text));
+    utils.applyPlotTitle(ax, utils.formatMixedFontText(title_text));
 
     drawnow;
 
@@ -175,31 +175,14 @@ end
 function mustBeRemoteGuidanceAnimationConfig(config)
 % mustBeRemoteGuidanceAnimationConfig 校验动画配置结构体。
 
-if ~isstruct(config) || ~isscalar(config)
-    error('mustBeRemoteGuidanceAnimationConfig:InvalidType', ...
-        'config 必须为标量 struct。');
-end
+schema = { ...
+    'frame_count', utils.schema.doubleScalar('integer', 'positive'); ...
+    'pause_seconds', utils.schema.doubleScalar('nonnegative'); ...
+    'gif_delay', utils.schema.doubleScalar('nonnegative'); ...
+    'save_gif', utils.schema.logicalScalar(); ...
+    'gif_path', utils.schema.textScalar()};
 
-required_fields = {'frame_count', 'pause_seconds', 'gif_delay', 'save_gif', 'gif_path'};
-missing_fields = required_fields(~isfield(config, required_fields));
-if ~isempty(missing_fields)
-    error('mustBeRemoteGuidanceAnimationConfig:MissingField', ...
-        'config 缺少字段：%s', strjoin(missing_fields, ', '));
-end
-
-validateattributes(config.frame_count, {'double'}, ...
-    {'real', 'finite', 'scalar', 'positive'}, ...
-    mfilename, 'config.frame_count');
-mustBeInteger(config.frame_count);
-validateattributes(config.pause_seconds, {'double'}, ...
-    {'real', 'finite', 'scalar', 'nonnegative'}, ...
-    mfilename, 'config.pause_seconds');
-validateattributes(config.gif_delay, {'double'}, ...
-    {'real', 'finite', 'scalar', 'nonnegative'}, ...
-    mfilename, 'config.gif_delay');
-validateattributes(config.save_gif, {'logical'}, {'scalar'}, ...
-    mfilename, 'config.save_gif');
-mustBeTextScalar(config.gif_path);
+utils.schema.validateStruct(config, schema, 'config');
 
 end
 

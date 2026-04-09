@@ -146,6 +146,6 @@ zlabel('z (m)');
 
 legend(utils.formatMixedFontText({'轨迹', '中间点（直线插值）', '起点', '终点'}));
 
-title(utils.formatMixedFontText('CW多脉冲分段转移轨迹'));
+utils.applyPlotTitle(gca, utils.formatMixedFontText('CW多脉冲分段转移轨迹'));
 
 end

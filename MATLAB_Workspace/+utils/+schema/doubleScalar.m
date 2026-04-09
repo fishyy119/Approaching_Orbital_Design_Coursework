@@ -1,0 +1,9 @@
+function descriptor = doubleScalar(varargin)
+% doubleScalar 构造 double 实数有限标量描述符。
+
+descriptor = struct( ...
+    'kind', "validateattributes", ...
+    'classes', {{'double'}}, ...
+    'attributes', {{'real', 'finite', 'scalar', varargin{:}}});
+
+end

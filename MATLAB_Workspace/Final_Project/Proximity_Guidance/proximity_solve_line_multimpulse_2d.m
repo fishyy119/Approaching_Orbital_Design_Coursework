@@ -31,15 +31,7 @@ arguments
     config (1,1) struct {mustBeProximityTransferConfig}
 end
 
-plan = struct();
-plan.is_feasible = false;
-plan.failure_reason = "";
-plan.time_limit_exceeded = false;
-plan.N = config.N;
-plan.drho0 = config.drho0;
-plan.drhoT = config.drhoT;
-plan.T_total_max = config.T_total_max;
-plan.theta = NaN;
+plan = initializePlan(config);
 
 distance0 = norm(rel_r0 - rel_rf);
 if distance0 <= 0
@@ -156,11 +148,6 @@ dv_all = [dv_segments, dv_terminal];
 
 plan.is_feasible = true;
 plan.failure_reason = "";
-plan.time_limit_exceeded = false;
-plan.N = config.N;
-plan.drho0 = config.drho0;
-plan.drhoT = config.drhoT;
-plan.T_total_max = config.T_total_max;
 plan.rel_r0 = rel_r0;
 plan.rel_v0 = rel_v0;
 plan.rel_rf = rel_rf;
@@ -185,32 +172,32 @@ plan.history = struct( ...
 
 end
 
+function plan = initializePlan(config)
+% initializePlan 构造多脉冲求解结果的默认结构体。
+
+plan = struct( ...
+    'is_feasible', false, ...
+    'failure_reason', "", ...
+    'time_limit_exceeded', false, ...
+    'N', config.N, ...
+    'drho0', config.drho0, ...
+    'drhoT', config.drhoT, ...
+    'T_total_max', config.T_total_max, ...
+    'theta', NaN);
+
+end
+
 function mustBeProximityTransferConfig(config)
 % mustBeProximityTransferConfig 校验多脉冲趋近配置。
 
-if ~isstruct(config) || ~isscalar(config)
-    error('mustBeProximityTransferConfig:InvalidType', ...
-        'config 必须为标量 struct。');
-end
+schema = { ...
+    'N', utils.schema.doubleScalar('integer', 'positive'); ...
+    'drho0', utils.schema.doubleScalar(); ...
+    'drhoT', utils.schema.doubleScalar(); ...
+    'segment_samples', utils.schema.doubleScalar('integer', '>=', 2); ...
+    'T_total_max', utils.schema.doubleScalar('positive')};
 
-required_fields = {'N', 'drho0', 'drhoT', 'segment_samples', 'T_total_max'};
-missing_fields = required_fields(~isfield(config, required_fields));
-if ~isempty(missing_fields)
-    error('mustBeProximityTransferConfig:MissingField', ...
-        'config 缺少字段：%s', strjoin(missing_fields, ', '));
-end
-
-validateattributes(config.N, {'double'}, ...
-    {'real', 'finite', 'scalar', 'positive'}, ...
-    mfilename, 'config.N');
-mustBeInteger(config.N);
-
-validateattributes(config.drho0, {'double'}, ...
-    {'real', 'finite', 'scalar'}, ...
-    mfilename, 'config.drho0');
-validateattributes(config.drhoT, {'double'}, ...
-    {'real', 'finite', 'scalar'}, ...
-    mfilename, 'config.drhoT');
+utils.schema.validateStruct(config, schema, 'config');
 
 if config.drho0 >= 0
     error('mustBeProximityTransferConfig:InvalidDrho0', ...
@@ -225,12 +212,5 @@ if config.drho0 >= config.drhoT
     error('mustBeProximityTransferConfig:InvalidSchedule', ...
         '需满足 drho0 < drhoT < 0，以形成减速型指数趋近。');
 end
-
-validateattributes(config.segment_samples, {'double'}, ...
-    {'real', 'finite', 'scalar', 'integer', '>=', 2}, ...
-    mfilename, 'config.segment_samples');
-validateattributes(config.T_total_max, {'double'}, ...
-    {'real', 'finite', 'scalar', 'positive'}, ...
-    mfilename, 'config.T_total_max');
 
 end

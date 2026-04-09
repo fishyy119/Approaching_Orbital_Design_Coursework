@@ -80,4 +80,4 @@ plot(T_list / 60, dv_total, 'k', 'LineWidth', 2);
 xlabel('Transfer Time (min)');
 ylabel('Δv (m/s)');
 legend('Δv1', 'Δv2', 'Δv_{total}');
-title('Two-Impulse Rendezvous: Δv vs Transfer Time');
+utils.applyPlotTitle(gca, 'Two-Impulse Rendezvous: Δv vs Transfer Time');

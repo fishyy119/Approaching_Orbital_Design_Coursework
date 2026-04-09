@@ -75,7 +75,7 @@ ylabel('y (km)');
 legend([h_target, h_traj, h_start, h_mid], ...
     utils.formatMixedFontText({'目标飞行器', '水滴悬停轨迹', '起点 / 终点', '半周期点'}), ...
     'Location', 'best');
-title(utils.formatMixedFontText(sprintf('水滴悬停轨迹，alpha = %.2f', alpha_design)));
+utils.applyPlotTitle(gca, utils.formatMixedFontText(sprintf('水滴悬停轨迹，alpha = %.2f', alpha_design)));
 
 %% 绘图：周期比扫描结果
 utils.createFigureA4();
@@ -84,7 +84,7 @@ plot(scan_stats.alpha, scan_stats.single_dv, 'o-', 'LineWidth', 1.5);
 grid on;
 xlabel('\alpha');
 ylabel('Single-cycle \Delta{\itv} (m/s)');
-title(utils.formatMixedFontText('单次机动速度增量'));
+utils.applyPlotTitle(gca, utils.formatMixedFontText('单次机动速度增量'));
 
 subplot(2, 2, 2);
 plot(scan_stats.alpha, scan_stats.total_dv_per_target_orbit, ...
@@ -92,21 +92,21 @@ plot(scan_stats.alpha, scan_stats.total_dv_per_target_orbit, ...
 grid on;
 xlabel('\alpha');
 ylabel('Total \Delta{\itv} per target orbit (m/s)');
-title(utils.formatMixedFontText('目标轨道周期总速度增量'));
+utils.applyPlotTitle(gca, utils.formatMixedFontText('目标轨道周期总速度增量'));
 
 subplot(2, 2, 3);
 plot(scan_stats.alpha, scan_stats.x_span_km, 'o-', 'LineWidth', 1.5);
 grid on;
 xlabel('\alpha');
 ylabel('x span (km)');
-title(utils.formatMixedFontText('水滴 x 向跨度'));
+utils.applyPlotTitle(gca, utils.formatMixedFontText('水滴 x 向跨度'));
 
 subplot(2, 2, 4);
 plot(scan_stats.alpha, scan_stats.y_span_km, 'o-', 'LineWidth', 1.5);
 grid on;
 xlabel('\alpha');
 ylabel('y span (km)');
-title(utils.formatMixedFontText('水滴 y 向跨度'));
+utils.applyPlotTitle(gca, utils.formatMixedFontText('水滴 y 向跨度'));
 
 %% 局部函数
 function design = design_hover_drop(n, r0, alpha)

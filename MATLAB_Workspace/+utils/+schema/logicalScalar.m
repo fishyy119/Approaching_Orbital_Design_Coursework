@@ -1,0 +1,9 @@
+function descriptor = logicalScalar(varargin)
+% logicalScalar 构造 logical 标量描述符。
+
+descriptor = struct( ...
+    'kind', "validateattributes", ...
+    'classes', {{'logical'}}, ...
+    'attributes', {{'scalar', varargin{:}}});
+
+end
