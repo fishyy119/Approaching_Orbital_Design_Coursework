@@ -1,0 +1,657 @@
+% 参考了《控制理论与应用》提供的LATEX模板  http://jcta.alljournals.ac.cn/uploadfile/cta_cn/20170419/kzllyy%20template20170419-2.9.zip
+% BHOSC   BUAAthesis  https://github.com/BHOSC/BUAAthesis/
+% 航空学报 http://hkxb.buaa.edu.cn/UserFiles/File/plate-2017-07-20(1).doc
+% 在JBUAA模板上改的
+
+%%%% 五号字对应10.5pt
+\documentclass[10.5pt,twocolumn]{aaas}
+
+%% 画圆圈数字
+\newcommand*\circled[1]{\tikz[baseline=(char.base)]{
+            \node[shape=circle,draw,inner sep=1pt] (char) {#1};}}
+
+\newcommand\mycolorRed[1]{{\color{red}#1}}
+\newcommand\mycolorYellow[1]{{\color{yellow}#1}}
+\newcommand\mycolorBlue[1]{{\color{blue}#1}}
+
+\DeclareMathSizes{10.5}{10}{6.8}{4.2}
+
+%%% 设置公式前后距离
+\setlength{\abovedisplayskip}{2.5mm}
+\setlength{\belowdisplayskip}{2.5mm}
+
+\usepackage{amsmath}
+\usepackage{mathtools}
+\usepackage{tabularx}
+\usepackage{longtable}
+\usepackage{makecell}
+\renewcommand\cellgape{\Gape[-3pt][-3pt]}
+\newcolumntype{Y}{>{\centering\arraybackslash}X}
+\newcolumntype{L}{>{\raggedright\arraybackslash}X}
+
+\usepackage{dashrule}
+\usepackage{newtxmath}
+
+% 图片尚未导出时使用的占位框，后续可替换为 \includegraphics。
+\newcommand{\placeholderfigure}[2][0.18\textheight]{%
+  \fbox{%
+    \begin{minipage}[c][#1][c]{0.92\linewidth}
+      \centering
+      \wuhao #2
+    \end{minipage}}%
+}
+
+\begin{document}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% 标题、作者信息
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\title{
+  \vspace{2.39cm} \xiaoerhao\textbf{基于Lambert与CW方程的二维共面抵近导引仿真}\vspace{0.4cm}
+}
+
+\author{
+  \sihao 甲乙丙 \makebox{$^{\text{1}}$}\\[0.3cm]
+  \xiaowuhao 1.~~北京理工大学~~空天科学与技术学院，北京~~100081
+}
+
+\date{}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% 中文摘要
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\CKeyword{空间抵近；二体动力学；Lambert问题；CW方程；多脉冲导引；LVLH坐标系}
+\CLCNo{V412.4}
+\Dcode{A}
+\PaperNo{}
+
+\twocolumn[
+  \begin{@twocolumnfalse}
+    \maketitle
+    \positiontextbox{2.25cm}{3.24cm}{\ArialFont \xiaowuhao http://hkxb.buaa.edu.cn \quad  hkxb@buaa.edu.cn\\}
+    \positiontextbox{2.25cm}{4.3cm}{
+      \liuhao
+      \parbox{\textwidth}{%
+        {\CJKfontspec[FakeSlant = 0.2]{SimHei}  引用格式:}{ \CJKfontspec[FakeSlant = 0.2]{STSong} 鱼鱼鱼. 基于Lambert与CW方程的二维共面抵近导引仿真\textsl{[J]}. 航空学报, \textsl{2026, xx(x): XXXXXX. YU Y Y.\\[-0.5em]
+              \hphantom{引用格式:} Planar rendezvous guidance simulation based on Lambert transfer and CW equations[J]. Acta Aeronautica et Astronautica Sinica, 2026, xx(x): XXXXXX(in Chinese). doi:}}%
+      }}
+    \begin{CAbstractAAAS}
+      面向空间目标抵近任务，建立由远程导引和近距离导引组成的二维共面仿真流程。远程段以二体动力学为基础，将跟踪飞行器从初始椭圆轨道转移到目标飞行器附近的固定捕获点，采用零圈Lambert两点边值问题搜索出发时刻与飞行时间，并以实际转移弧段最低高度作为安全约束。近距离段以目标圆轨道LVLH坐标系下的Clohessy-Wiltshire（CW）方程为基础，从目标后方5 km捕获点出发，采用直线指数趋近律和多脉冲速度修正，将跟踪飞行器切入预设平面绕飞轨道。为评估解析模型适用性，仿真程序还在惯性系中对目标与跟踪飞行器分别进行二体数值积分，并将结果转换回LVLH坐标系，与CW解析轨迹进行逐点比较。理论分析表明，CW线性化误差主要由相对距离与目标轨道半径之比、相对位置方向和传播时间决定；在1--10 km近程尺度下，二阶加速度误差量级约为$10^{-7}$--$10^{-5}\ \mathrm{m/s^2}$。本文给出远程Lambert窗口搜索、近程多脉冲切入绕飞轨道和数值回代验证的完整建模过程，为课程综合仿真任务提供可复现实验框架。
+    \end{CAbstractAAAS}
+  \end{@twocolumnfalse}
+]
+
+\wuhao
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% 正文
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{引言}
+
+空间抵近任务是交会对接、近距离观测、在轨服务、目标抓捕和编队飞行等任务的基础环节。与单纯的轨道机动不同，抵近任务不仅要求飞行器进入目标附近区域，还要求在终端满足相对位置、相对速度和安全距离等约束。对于远距离段，飞行器之间的相对距离与地心轨道尺度相当，适合在惯性系中利用二体动力学和Lambert两点转移描述；对于近距离段，相对距离远小于目标轨道半径，可以在目标LVLH坐标系中利用线性相对运动模型快速设计多脉冲导引律。
+
+本文围绕二维共面抵近任务建立仿真方案。目标飞行器运行在离地\SI{1000}{km}高的圆轨道上，初始相位角为$80^\circ$。跟踪飞行器初始位于同一轨道平面内的椭圆轨道，近地点高度为\SI{400}{km}，远地点高度为\SI{600}{km}，初始真近点角为$45^\circ$。远程导引段的终端为目标后方\SI{5}{km}处捕获点，到达捕获点后，近距离导引段继续将跟踪飞行器切入预设平面绕飞轨道。
+
+\begin{figure*}[t!]
+  \centering
+  \placeholderfigure[0.16\textheight]{图件占位：任务总体示意图。应包含跟踪飞行器初始椭圆轨道、目标圆轨道、远程Lambert转移段、后方捕获点和近程绕飞轨道。}
+  \bicaption{图}{\centering 二维共面抵近任务总体构型}{Fig.}{\centering Overall configuration of the planar rendezvous mission}
+\end{figure*}
+
+\section{理论模型}
+
+\subsection{二体动力学与椭圆轨道时间推进}\label{subsec:orbit-time}
+
+在忽略大气阻力、地球非球形摄动、第三体引力和连续推力作用的条件下，飞行器在地心惯性系中的运动由二体动力学描述：
+\begin{equation}
+  \ddot{\boldsymbol{r}}=-\mu\frac{\boldsymbol{r}}{r^3}
+\end{equation}
+其中$\boldsymbol{r}$为飞行器相对地心的位置矢量，$r$为位置矢量的模长，$\mu$为地球引力常数。
+
+对于椭圆轨道，轨道几何方程为
+\begin{equation}
+  r=\frac{p}{1+e\cos\theta}=a\left(1-e\cos E\right)
+\end{equation}
+其中$e$为偏心率，$a$为半长轴，$\theta$为真近点角,$E$为偏近点角,$p=a(1-e^2)$为半通径。
+
+偏近点角到真近点角的转换关系由下式给出：
+\begin{equation}
+  \theta=2\cdot\mathrm{atan2}\left(\sqrt{1+e}\sin\left(\frac{E}{2}\right),\sqrt{1-e}\cos\left(\frac{E}{2}\right)\right)
+\end{equation}
+其中$\mathrm{atan2}$为四象限反正切函数。
+
+已知航天器的真近点角$\theta$，则其位置速度矢量由下式给出:
+\begin{equation}
+  \left\{
+  \begin{aligned}
+    \boldsymbol{r} & =
+    r \begin{bmatrix}
+        \cos \theta \\
+        \sin \theta
+      \end{bmatrix}
+    \\
+    \boldsymbol{v} & =
+    \sqrt{\dfrac{\mu}{p}} \begin{bmatrix}
+                            -\sin \theta \\
+                            e+\cos \theta
+                          \end{bmatrix}
+  \end{aligned}
+  \right.
+\end{equation}
+
+椭圆轨道的时间推进采用平近点角$M$：
+\begin{equation}
+  M(t)=M_0+n(t-t_0)
+\end{equation}
+其中平均角速度$n$为
+\begin{equation}
+  n=\sqrt{\frac{\mu}{a^3}}
+\end{equation}
+平近点角与偏近点角之间的关系由开普勒方程给出：
+\begin{equation}
+  E-e\sin E = M
+\end{equation}
+
+
+\subsection{Lambert两点转移}\label{subsec:lambert}
+
+航天器任意时刻的位置速度矢量可由Lagrange系数与初始时刻位置速度矢量表示：
+\begin{equation}
+  \left\{
+  \begin{aligned}
+    \boldsymbol{r}(t)=f(t)\boldsymbol{r}_0+g(t)\boldsymbol{v}_0 \\
+    \boldsymbol{v}(t)=\dot{f}(t)\boldsymbol{r}_0+\dot g(t)\boldsymbol{v}_0
+  \end{aligned}
+  \right.
+\end{equation}
+其中$f\dot{g}-\dot{f}g=1$。因此已知起止时刻的位置，转移弧段两端速度可表示为：
+\begin{equation}\left\{
+  \begin{aligned}
+    \boldsymbol{v}_1=\frac{\boldsymbol{r}_2-f\boldsymbol{r}_1}{g} \\
+    \boldsymbol{v}_2=\frac{\dot g\boldsymbol{r}_2-\boldsymbol{r}_1}{g}
+  \end{aligned}
+  \right.
+  \label{eq:lambert-velocity}
+\end{equation}
+此时问题转化为求解$\eqref{eq:lambert-velocity}$中的Lagrange系数。
+
+通用变量法可将Lambert问题转化为关于单个变量的时间方程。两位置矢量在轨道平面内的转移角为$\Delta\theta$。对于二维共面零圈转移，若起终点极角对应的逆时针夹角为$\phi_{\mathrm{ccw}}$，则几何短弧与长弧可分别写为
+\begin{equation}
+  \Delta\theta_{\mathrm{short}}
+  =
+  \min\left(\phi_{\mathrm{ccw}},2\pi-\phi_{\mathrm{ccw}}\right)
+\end{equation}
+\begin{equation}
+  \Delta\theta_{\mathrm{long}}
+  =
+  2\pi-\Delta\theta_{\mathrm{short}}
+\end{equation}
+对给定分支，定义Lambert几何参数
+\begin{equation}
+  A=\sin\Delta\theta
+  \sqrt{\frac{r_1r_2}{1-\cos\Delta\theta}}
+\end{equation}
+当$\Delta\theta$过小或$A$接近零时，两点转移几何趋于退化，标准Lambert速度关系不再具有良好的数值条件。
+
+通用变量法的核心是把飞行时间约束写成关于单个变量$z$的隐式方程。先定义Stumpff函数
+\begin{equation}
+  C(z)=
+  \begin{cases}
+    \dfrac{1-\cos\sqrt{z}}{z},    & z>0 \\[1.0ex]
+    \dfrac{1}{2},                 & z=0 \\[1.0ex]
+    \dfrac{\cosh\sqrt{-z}-1}{-z}, & z<0
+  \end{cases}
+\end{equation}
+\begin{equation}
+  S(z)=
+  \begin{cases}
+    \dfrac{\sqrt{z}-\sin\sqrt{z}}{\left(\sqrt{z}\right)^3},     & z>0 \\[1.0ex]
+    \dfrac{1}{6},                                               & z=0 \\[1.0ex]
+    \dfrac{\sinh\sqrt{-z}-\sqrt{-z}}{\left(\sqrt{-z}\right)^3}, & z<0
+  \end{cases}
+\end{equation}
+由$z$和几何参数$A$构造辅助函数
+\begin{equation}
+  y(z)=r_1+r_2+
+  A\frac{zS(z)-1}{\sqrt{C(z)}}
+\end{equation}
+只有当$C(z)>0$且$y(z)>0$时，该$z$才对应可用的转移几何。进一步令
+\begin{equation}
+  \chi(z)=\sqrt{\frac{y(z)}{C(z)}}
+\end{equation}
+则给定飞行时间$\Delta t$的通用变量Lambert方程可写成隐式残差形式：
+\begin{equation}
+  F(z)=\chi^3(z)S(z)+A\sqrt{y(z)}
+  -\sqrt{\mu}\Delta t=0
+\end{equation}
+对给定的$r_1$、$r_2$、$\Delta\theta$、$\Delta t$和$\mu$，满足该方程的$z$确定了相应的转移弧段。
+
+求得$z$和$y(z)$后，Lagrange系数可由下式计算：
+\begin{equation}\left\{
+  \begin{aligned}
+    f=1-\frac{y}{r_1}       \\
+    g=A\sqrt{\frac{y}{\mu}} \\
+    \dot g=1-\frac{y}{r_2}
+  \end{aligned}
+  \right.
+\end{equation}
+代入式(\ref{eq:lambert-velocity})得到转移起点速度$\boldsymbol{v}_{1,\mathrm{tr}}$和终点速度$\boldsymbol{v}_{2,\mathrm{tr}}$，进而可以求得转移所需的速度脉冲。
+
+\subsection{LVLH坐标变换与CW方程}
+
+近距离段采用目标飞行器LVLH坐标系。若目标惯性系状态为$(\boldsymbol{r}_t,\boldsymbol{v}_t)$，角动量为$\boldsymbol{h}_t = \boldsymbol{r}_t \times \boldsymbol{v}_t$，则三轴单位矢量在惯性系下表示为
+\begin{equation}\left\{
+  \begin{aligned}
+    \boldsymbol{e}_x & =\frac{\boldsymbol{r}_t}{\|\boldsymbol{r}_t\|} \\
+    \boldsymbol{e}_z & =\frac{\boldsymbol{h}_t}{\|\boldsymbol{h}_t\|} \\
+    \boldsymbol{e}_y & =\boldsymbol{e}_z \times \boldsymbol{e}_x
+  \end{aligned}
+  \right.
+\end{equation}
+
+LVLH系与惯性系之间的转换关系由下式给出：
+
+\begin{equation}
+  \prescript{I}{}{\boldsymbol{R}}_{L} = \left(\prescript{L}{}{\boldsymbol{R}}_{I}\right)^\mathrm{T} = \begin{bmatrix}
+    \boldsymbol{e}_x & \boldsymbol{e}_y & \boldsymbol{e}_z
+  \end{bmatrix}
+\end{equation}
+
+\begin{equation}
+  \prescript{L}{}{\boldsymbol{r}} = \prescript{L}{}{\boldsymbol{R}}_{I} \prescript{I}{}{\boldsymbol{r}}
+\end{equation}
+\begin{equation}
+  \prescript{L}{}{\dot{\boldsymbol{r}}}
+  = \frac{\mathrm{d}}{\mathrm{d}t}\left(\prescript{L}{}{\boldsymbol{R}}_{I} \prescript{I}{}{\boldsymbol{r}}\right)
+  = \prescript{L}{}{\boldsymbol{\omega}}_{L,I} \times \prescript{L}{}{\boldsymbol{R}}_{I} \prescript{I}{}{\boldsymbol{r}} + \prescript{L}{}{\boldsymbol{R}}_{I} \prescript{I}{}{\dot{\boldsymbol{r}}}
+\end{equation}
+其中$\prescript{L}{}{\boldsymbol{\omega}}_{L,I}=[0,0,-n]^\mathrm{T}$是表示在LVLH系下惯性系相对于LVLH系的角速度，下文省略其角标；$\boldsymbol{r}$是地心到航天器的矢量，左上角标为其所表示的坐标系。航天器在LVLH坐标系下的位置速度可表示为：
+
+\begin{equation}
+  \boldsymbol{\rho} = \prescript{L}{}{\boldsymbol{r}} - \prescript{L}{}{\boldsymbol{r}_t}
+\end{equation}
+
+\begin{equation}
+  \dot{\boldsymbol{\rho}} = \prescript{L}{}{\dot{\boldsymbol{r}}} - \prescript{L}{}{\dot{\boldsymbol{r}}_t}
+  = \omega \times \boldsymbol{\rho} + \prescript{L}{}{R}_{I} \left(\prescript{I}{}{\dot{\boldsymbol{r}}} - \prescript{I}{}{\dot{\boldsymbol{r}}_t}\right)
+\end{equation}
+
+当目标参考轨道为圆轨道，且相对距离远小于目标轨道半径时，可将非线性相对运动方程线性化。设$\boldsymbol{\rho}=[x,y,z]^\mathrm{T}$，其中$x$、$y$、$z$分别为径向、沿迹和法向相对位置，$\boldsymbol{a}=[a_x,a_y,a_z]^\mathrm{T}$为LVLH坐标系中的控制加速度，则三维CW方程为
+\begin{equation}
+  \left\{
+  \begin{aligned}
+    \ddot x-2n\dot y-3n^2x & =a_x \\
+    \ddot y+2n\dot x       & =a_y \\
+    \ddot z+n^2z           & =a_z
+  \end{aligned}
+  \right.
+\end{equation}
+对于脉冲导引，两次脉冲之间令$\boldsymbol{a}=\boldsymbol{0}$，状态传播可写为
+\begin{equation}
+  \begin{bmatrix}
+    \boldsymbol{\rho}(t) \\
+    \dot{\boldsymbol{\rho}}(t)
+  \end{bmatrix}
+  =
+  \begin{bmatrix}
+    \Phi_{rr} & \Phi_{rv} \\
+    \Phi_{vr} & \Phi_{vv}
+  \end{bmatrix}
+  \begin{bmatrix}
+    \boldsymbol{\rho}_0 \\
+    \dot{\boldsymbol{\rho}}_0
+  \end{bmatrix}
+\end{equation}
+设$\tau=nt$，$s=\sin\tau$，$c=\cos\tau$，三维状态转移矩阵分块为
+\begin{equation}
+  \Phi_{rr}=
+  \begin{bmatrix}
+    4-3c      & 0 & 0 \\
+    6(s-\tau) & 1 & 0 \\
+    0         & 0 & c
+  \end{bmatrix}
+\end{equation}
+\begin{equation}
+  \Phi_{rv}=
+  \begin{bmatrix}
+    s/n      & 2(1-c)/n     & 0   \\
+    2(c-1)/n & (4s-3\tau)/n & 0   \\
+    0        & 0            & s/n
+  \end{bmatrix}
+\end{equation}
+\begin{equation}
+  \Phi_{vr}=
+  \begin{bmatrix}
+    3ns     & 0 & 0   \\
+    6n(c-1) & 0 & 0   \\
+    0       & 0 & -ns
+  \end{bmatrix}
+\end{equation}
+\begin{equation}
+  \Phi_{vv}=
+  \begin{bmatrix}
+    c   & 2s   & 0 \\
+    -2s & 4c-3 & 0 \\
+    0   & 0    & c
+  \end{bmatrix}
+\end{equation}
+
+状态转移矩阵由转移时间$t$唯一决定，若在此基础上已知转移起止点，则可以求解出发时所需速度增量为：
+\begin{equation}
+  \Delta v = \left\|\dot{\boldsymbol{\rho}}^+_0 - \dot{\boldsymbol{\rho}}^-_0\right\|
+  = \left\|\Phi_{rv}^{-1}\left(\boldsymbol{\rho}_t - \Phi_{rr}\boldsymbol{\rho}_0 \right)-\dot{\boldsymbol{\rho}}_0^-\right\|
+\end{equation}
+
+\subsection{CW方程下的椭圆绕飞轨道}
+
+在无控条件下，CW方程存在一类相对于目标飞行器周期闭合的自然绕飞轨道。首先将CW方程解析解改写为长期项与周期项的形式为
+\begin{equation}
+  \left\{
+  \begin{aligned}
+    x & =x_{\mathrm{const}}+k\sin (nt+\alpha)                                   \\
+    y & =y_{\mathrm{const}}-\frac{3}{2}ntx_{\mathrm{const}} +2k\cos (nt+\alpha) \\
+    z & =m\sin(nt+\beta)
+  \end{aligned}\right.
+\end{equation}
+令$x_\mathrm{const}=0$，可消除其中长期项，得到平面周期解为
+\begin{equation}
+  \left\{
+  \begin{aligned}
+    x & =a_f\sin(nt+\alpha)                    \\
+    y & =2a_f\cos(nt+\alpha) +y_\mathrm{const} \\
+    z & =m\sin(nt+\beta)
+  \end{aligned}
+  \right.
+\end{equation}
+式中，$k$为径向幅值，$y_\mathrm{const}$为沿迹方向中心偏置。该绕飞轨道的面内轨迹与面外轨迹独立，各由两个参数决定。
+
+\section{远程段导引策略与结果}
+
+\subsection{Lambert窗口搜索策略}
+
+远程段导引目标是将跟踪飞行器从初始椭圆轨道转移到目标后方捕获点，并在到达时满足零相对速度条件。该段采用出发与到达两次脉冲，通过对出发时刻$t_d$和飞行时间$\Delta t$进行窗口搜索，获得满足安全约束且速度增量较小的转移方案。远程段窗口搜索参数列于表\ref{tab:remote-search-params}。
+
+对每一组$(t_d,\Delta t)$，先由\ref{subsec:orbit-time}节中的椭圆轨道时间函数计算跟踪飞行器出发状态$(\boldsymbol{r}_1,\boldsymbol{v}_{1,\mathrm{nom}})$与到达状态$(\boldsymbol{r}_2,\boldsymbol{v}_{f})$，随后使用\ref{subsec:lambert}节中的Lambert理论公式计算转移弧段两端速度$\boldsymbol{v}_{1,\mathrm{tr}}$和$\boldsymbol{v}_{2,\mathrm{tr}}$，最后使用总速度增量作为评价函数，定义为
+\begin{equation}
+  J = \Delta v_1 + \Delta v_2
+  =
+  \left\|\boldsymbol{v}_{1,\mathrm{tr}}-\boldsymbol{v}_{1,\mathrm{nom}}\right\|
+  +
+  \left\|\boldsymbol{v}_f-\boldsymbol{v}_{2,\mathrm{tr}}\right\|
+\end{equation}
+
+\begin{table}[t!]
+  \centering
+  \captionnamefont{\xiaowuhao\bf}
+  \captiontitlefont{\xiaowuhao\bf}
+  \bicaption[tab:remote-search-params]{表}{远程段窗口搜索参数}{Table}{Search parameters of the remote-guidance window}
+  \liuhao
+  \begin{tabularx}{0.98\columnwidth}{LLL}
+    \hline
+    参数           & 含义          & 取值                      \\
+    \hline
+    $t_d$        & 出发时刻        & $[0,1.5T_t]$            \\
+    $\Delta t$   & Lambert飞行时间 & $[\SI{10}{min},1.2T_t]$ \\
+    $\Delta t_g$ & 网格步长        & \SI{60}{s}              \\
+    安全阈值         & 转移弧段最低半径下限  & $R_e+\SI{150}{km}$      \\
+    \hline
+  \end{tabularx}
+\end{table}
+
+\subsection{结果分析}
+
+在满足表\ref{tab:remote-search-params}所列安全阈值的候选网格中，选取总速度增量最小的方案作为远程导引最优窗口。程序随后在惯性系中对等待段和转移段进行二体数值递推，检查出发点、到达捕获点和末端脉冲的一致性。图\ref{fig:remote-contour}和图\ref{fig:remote-trajectory}分别给出待替换的Lambert搜索窗口和最优轨迹图位。
+
+\begin{figure}[t!]
+  \centering
+  \placeholderfigure{图件占位：远程导引Lambert窗口等高线图，横轴为出发时刻$t_d$，纵轴为飞行时间$\Delta t$，颜色为总$\Delta V$。}
+  \bicaption[fig:remote-contour]{图}{\centering 远程导引Lambert窗口等高线图}{Fig.}{\centering Contour map of Lambert transfer windows in the remote-guidance phase}
+\end{figure}
+
+\begin{figure}[t!]
+  \centering
+  \placeholderfigure{图件占位：最优远程转移轨迹图，包括初始椭圆轨道、目标圆轨道、等待段和Lambert转移段。}
+  \bicaption[fig:remote-trajectory]{图}{\centering 最优远程导引转移轨迹}{Fig.}{\centering Optimal trajectory of the remote-guidance phase}
+\end{figure}
+
+\begin{table*}[t!]
+  \centering
+  \captionnamefont{\xiaowuhao\bf}
+  \captiontitlefont{\xiaowuhao\bf}
+  \bicaption{表}{远程段Lambert窗口搜索结果记录表}{Table}{Result record of Lambert window search in the remote-guidance phase}
+  \liuhao
+  \begin{tabularx}{0.96\textwidth}{LL|LL}
+    \hline
+    指标               & 数值 & 指标               & 数值 \\
+    \hline
+    安全可行网格数          & 待填 & 安全可行比例           & 待填 \\
+    最优出发时刻$t_d$      & 待填 & 最优飞行时间$\Delta t$ & 待填 \\
+    到达时刻$t_a$        & 待填 & Lambert分支        & 待填 \\
+    出发脉冲$\Delta v_1$ & 待填 & 到达脉冲$\Delta v_2$ & 待填 \\
+    总速度增量$\Delta V$  & 待填 & 到达脉冲前相对速度        & 待填 \\
+    转移弧段最低高度         & 待填 & 等待段末位置误差         & 待填 \\
+    等待段末速度误差         & 待填 & 到达捕获点位置误差        & 待填 \\
+    到达转移末速度误差        & 待填 & 数值递推末端脉冲         & 待填 \\
+    \hline
+  \end{tabularx}
+\end{table*}
+
+从策略上看，远程段方法的优点是搜索变量直观，能够直接显示$t_d-\Delta t$平面上的速度增量分布和安全可行区域。局限性在于当前Lambert求解器仅覆盖零圈解，short-way和long-way只表示单圈内的几何转移方向，并未枚举多圈Lambert解族。若后续允许更长飞行时间或多圈转移，应扩展求解器的圈数分支和结果记录结构。
+
+\section{近程段导引策略与结果}
+
+\subsection{绕飞轨道与切入点}
+
+近距离导引段从后方捕获点出发：
+\begin{equation}
+  \boldsymbol{\rho}_0=
+  \begin{bmatrix}
+    0 \\
+    -\SI{5}{km}
+  \end{bmatrix},\qquad
+  \dot{\boldsymbol{\rho}}_0=
+  \begin{bmatrix}
+    0 \\
+    0
+  \end{bmatrix}
+\end{equation}
+终端参考轨道为平面自然绕飞轨道
+\begin{equation}
+  x=k\sin\theta,\qquad
+  y=2k\cos\theta+y_c
+  \label{eq:fly-around}
+\end{equation}
+当前算例取$k=\SI{1}{km}$，$y_c=0$。对应的参考速度为
+\begin{equation}
+  \dot x=kn\cos\theta,\qquad
+  \dot y=-2kn\sin\theta
+\end{equation}
+因此，给定切入相位$\theta_{\mathrm{in}}$后，切入点状态可写为
+\begin{equation}
+  \boldsymbol{\rho}_f=
+  \begin{bmatrix}
+    k\sin\theta_{\mathrm{in}} \\
+    2k\cos\theta_{\mathrm{in}}+y_c
+  \end{bmatrix}
+  \qquad
+  \dot{\boldsymbol{\rho}}_f=
+  \begin{bmatrix}
+    kn\cos\theta_{\mathrm{in}} \\
+    -2kn\sin\theta_{\mathrm{in}}
+  \end{bmatrix}
+\end{equation}
+程序对切入相位进行网格搜索，当前搜索区间为第三象限：
+\begin{equation}
+  \theta_{\mathrm{in}}\in[\pi,3\pi/2]
+\end{equation}
+离散点数为91。
+
+\subsection{直线指数趋近律与多脉冲反解}
+
+近程转移路径采用从初始点到切入点的直线。设初始路径距离为
+\begin{equation}
+  \rho_0^s=\|\boldsymbol{\rho}_0-\boldsymbol{\rho}_f\|
+\end{equation}
+路径方向为
+\begin{equation}
+  \hat{\boldsymbol{\rho}}
+  =\frac{\boldsymbol{\rho}_0-\boldsymbol{\rho}_f}{\rho_0^s}
+\end{equation}
+指数趋近律由起点调度导数$\dot\rho_0^s$和终点调度导数$\dot\rho_T^s$确定，并要求
+\begin{equation}
+  \dot\rho_0^s<\dot\rho_T^s<0
+\end{equation}
+趋近律参数为
+\begin{equation}
+  a=\frac{\dot\rho_0^s-\dot\rho_T^s}{\rho_0^s}
+\end{equation}
+总转移时间为
+\begin{equation}
+  T=\frac{\ln(\dot\rho_T^s/\dot\rho_0^s)}{a}
+\end{equation}
+若$T$非正、不可计算或超过上限$T_{\max}=\SI{40}{min}$，则该候选解剔除。节点距离按
+\begin{equation}
+  \rho^s(t)=\rho_0^s e^{at}
+  +\frac{\dot\rho_T^s}{a}\left(e^{at}-1\right)
+  \label{eq:exponential-approach}
+\end{equation}
+生成，对应节点位置为
+\begin{equation}
+  \boldsymbol{\rho}(t)=\boldsymbol{\rho}_f+\hat{\boldsymbol{\rho}}\rho^s(t)
+\end{equation}
+
+设第$k$段初始位置为$\boldsymbol{\rho}_k$，脉冲前速度为$\dot{\boldsymbol{\rho}}_k^-$，下一节点位置为$\boldsymbol{\rho}_{k+1}$，段时间为$\Delta t_k$。利用CW状态转移矩阵，可反解段首脉冲：
+\begin{equation}
+  \Delta\boldsymbol{v}_k
+  =
+  \Phi_{rv}^{-1}
+  \left(
+  \boldsymbol{\rho}_{k+1}
+  -\Phi_{rr}\boldsymbol{\rho}_k
+  -\Phi_{rv}\dot{\boldsymbol{\rho}}_k^-
+  \right)
+  \label{eq:segment-impulse}
+\end{equation}
+脉冲后速度为$\dot{\boldsymbol{\rho}}_k^+=\dot{\boldsymbol{\rho}}_k^-+\Delta\boldsymbol{v}_k$，段末速度为
+\begin{equation}
+  \dot{\boldsymbol{\rho}}_{k+1}^-=
+  \Phi_{vr}\boldsymbol{\rho}_k+\Phi_{vv}\dot{\boldsymbol{\rho}}_k^+
+\end{equation}
+末端切入脉冲将段末速度修正为绕飞轨道参考速度：
+\begin{equation}
+  \Delta\boldsymbol{v}_{\mathrm{ins}}
+  =
+  \dot{\boldsymbol{\rho}}_f-\dot{\boldsymbol{\rho}}_N^-
+\end{equation}
+近程段总速度增量为
+\begin{equation}
+  \Delta V_{\mathrm{prox}}
+  =
+  \sum_{k=1}^{N}\|\Delta\boldsymbol{v}_k\|
+  +\|\Delta\boldsymbol{v}_{\mathrm{ins}}\|
+  \label{eq:proximity-total-dv}
+\end{equation}
+
+当前主脚本默认搜索$N=5$，并保留对多个脉冲段数扩展的结果接口。外层搜索变量为$N$、$\dot\rho_0^s$、$\dot\rho_T^s$和$\theta_{\mathrm{in}}$。对每个候选四元组，先由式(\ref{eq:fly-around})计算切入点，再由式(\ref{eq:exponential-approach})生成直线路径节点，最后由式(\ref{eq:segment-impulse})逐段反解脉冲，并按式(\ref{eq:proximity-total-dv})评价总速度增量。
+
+\subsection{近程结果与数值回代}
+
+近距离导引的结果图包括调度导数平面上的总速度增量归并等高线图、最优切入相位颜色图、总速度增量随脉冲段数变化图、不同脉冲段数下转移时间与最优总速度增量关系图，以及相对系转移和切入后绕飞轨迹图。本文初稿先以占位框表示，后续可由MATLAB绘图输出替换。
+
+\begin{figure}[t!]
+  \centering
+  \placeholderfigure{图件占位：起点调度导数--终点调度导数归并总$\Delta V$等高线图。}
+  \bicaption{图}{\centering 近程导引调度导数归并总速度增量}{Fig.}{\centering Projected total velocity increment with respect to approach scheduling derivatives}
+\end{figure}
+
+\begin{figure}[t!]
+  \centering
+  \placeholderfigure{图件占位：相对系多脉冲转移轨迹与切入后绕飞轨迹。}
+  \bicaption{图}{\centering 近程多脉冲转移与绕飞轨迹}{Fig.}{\centering Proximity multi-impulse transfer and fly-around trajectory}
+\end{figure}
+
+\begin{table*}[t!]
+  \centering
+  \captionnamefont{\xiaowuhao\bf}
+  \captiontitlefont{\xiaowuhao\bf}
+  \bicaption{表}{近距离导引最优方案结果记录表}{Table}{Result record of the optimal proximity-guidance plan}
+  \liuhao
+  \begin{tabularx}{0.96\textwidth}{LL|LL}
+    \hline
+    指标               & 数值 & 指标                                & 数值 \\
+    \hline
+    总网格点数            & 待填 & 满足导数顺序约束的网格点数                     & 待填 \\
+    求解成功的可行网格点数      & 待填 & 因总转移时间超限剔除的网格点数                   & 待填 \\
+    最优脉冲段数$N$        & 待填 & 最优$\dot\rho_0^s$                  & 待填 \\
+    最优$\dot\rho_T^s$ & 待填 & 最优切入相位$\theta_{\mathrm{in}}$      & 待填 \\
+    切入点位置            & 待填 & 切入点速度                             & 待填 \\
+    总转移时间            & 待填 & 段间隔                               & 待填 \\
+    末端切入脉冲           & 待填 & 近程总速度增量$\Delta V_{\mathrm{prox}}$ & 待填 \\
+    \hline
+  \end{tabularx}
+\end{table*}
+
+解析设计完成后，程序在惯性系中对目标飞行器和跟踪飞行器分别进行二体数值积分，并在每个采样时刻转换回LVLH坐标系，与CW解析轨迹逐点比较。末端切入脉冲施加后，程序继续进行一段无控传播，用于检查跟踪飞行器是否保持在预期绕飞轨道附近。误差统计项列于表\ref{tab:prox-validation}。
+
+\begin{table}[h!]
+  \centering
+  \captionnamefont{\xiaowuhao\bf}
+  \captiontitlefont{\xiaowuhao\bf}
+  \bicaption[tab:prox-validation]{表}{近距离导引数值回代误差统计表}{Table}{Numerical validation error statistics of the proximity-guidance phase}
+  \liuhao
+  \begin{tabularx}{\linewidth}{LY}
+    \hline
+    误差指标        & 数值 \\
+    \hline
+    转移段最大位置误差   & 待填 \\
+    转移段最大速度误差   & 待填 \\
+    末端脉冲前位置误差   & 待填 \\
+    末端脉冲前速度误差   & 待填 \\
+    切入后绕飞最大位置误差 & 待填 \\
+    切入后绕飞最大速度误差 & 待填 \\
+    \hline
+  \end{tabularx}
+\end{table}
+
+该近程策略的主要特点是几何意义清晰：路径由捕获点和绕飞切入点确定，节点分布由指数趋近律确定，每段脉冲由CW状态转移矩阵直接反解。通过搜索切入相位，可以避免将终端约束固定在绕飞轨道上的单一位置，从而在给定转移时间和脉冲段数下寻找更低速度增量的切入方案。其局限性同样来自CW模型的线性化假设，因此必须配合总时间限制和惯性系数值回代验证。
+
+\section{结\quad 论}
+
+本文根据课程综合仿真源码，形成了二维共面空间抵近任务的远程--近程分段导引论文框架。主要结论如下：
+
+1) 远程段可采用二体动力学和零圈Lambert两点转移进行开环窗口搜索。以出发时刻$t_d$和飞行时间$\Delta t$为搜索变量，并按实际转移弧段最低高度筛选安全可行解，可以得到直观的速度增量分布和最优转移窗口。
+
+2) 近距离段可采用目标圆轨道LVLH坐标系下的CW方程进行多脉冲抵近设计。通过直线指数趋近律生成中间节点，并利用CW状态转移矩阵反解每段段首脉冲，可将跟踪飞行器从目标后方捕获点导引至预设平面绕飞轨道。
+
+3) CW模型的线性化误差主要与相对距离尺度、相对位置方向和传播时间有关。按本文目标轨道半径估算，1--10 km尺度下二阶加速度误差约为$10^{-7}$--$10^{-5}\ \mathrm{m/s^2}$；该误差会随传播时间积累，因此近程导引需要设置总转移时间上限，并使用惯性系二体数值积分进行回代校核。
+
+4) 当前实现仍存在可扩展空间。远程Lambert求解器尚未枚举多圈解族；近程模型暂限二维共面问题，未考虑面外运动、轨道摄动、脉冲执行误差和闭环修正。后续可在现有开环导引框架上加入多圈Lambert搜索、三维相对运动和反馈校正策略，以提高方案的工程适用性。
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% 英文摘要页
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newpage
+\twocolumn[
+  \begin{@twocolumnfalse}\vspace*{1cm}
+    \parbox{\textwidth}{
+      \xiaosihao\ArialFont\textbf{Planar rendezvous guidance simulation based on Lambert transfer and CW equations}
+      \vspace*{0.3cm}
+
+      {\xiaosihao Course Paper}\\[0.3cm]
+
+      \vspace*{1.0cm}
+
+      \xiaowuhao
+      {
+        \renewcommand{\baselinestretch}{0.9}
+        \ArialFont
+        \textbf{Abstract:}
+        A planar rendezvous simulation framework composed of a remote-guidance phase and a proximity-guidance phase is developed for the coursework mission. In the remote-guidance phase, the chaser is transferred from an initial elliptic orbit to a fixed capture point behind the target vehicle. The departure time and the time of flight are searched by solving zero-revolution Lambert problems, while the minimum radius along the actual transfer arc is used as the safety constraint. In the proximity-guidance phase, the Clohessy-Wiltshire equations in the target LVLH frame are used to design a multi-impulse transfer from the 5 km capture point to a prescribed planar fly-around orbit. The transfer path is generated by a straight-line exponential approach law, and each impulse is solved from the CW state transition matrix. The analytical design is further checked by two-body numerical propagation in the inertial frame and by transforming the result back to the LVLH frame. The linearization error analysis shows that the CW error is mainly related to the ratio between the relative distance and the target orbital radius, the direction of the relative position, and the propagation duration. For the 1--10 km proximity scale considered in this work, the second-order acceleration error is on the order of $10^{-7}$--$10^{-5}\ \mathrm{m/s^2}$.
+
+        \textbf{Keywords:} proximity operation; two-body dynamics; Lambert problem; Clohessy-Wiltshire equations; multi-impulse guidance; LVLH frame
+      }
+    }
+  \end{@twocolumnfalse}
+]
+
+\end{document}
