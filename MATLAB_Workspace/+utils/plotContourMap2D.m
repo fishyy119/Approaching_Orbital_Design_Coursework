@@ -67,7 +67,7 @@ end
 
 set(ax, 'YDir', 'normal');
 grid(ax, 'on');
-grid(ax, 'minor');
+% grid(ax, 'minor');
 box(ax, 'on');
 xlim(ax, [x_grid(1, 1), x_grid(1, end)]);
 ylim(ax, [y_grid(1, 1), y_grid(end, 1)]);

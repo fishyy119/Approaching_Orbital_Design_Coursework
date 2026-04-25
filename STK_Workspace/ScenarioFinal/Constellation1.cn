@@ -1,0 +1,32 @@
+stk.v.12.0
+WrittenBy    STK_v12.2.0
+
+BEGIN Constellation
+
+    Name		 Constellation1
+    BEGIN Definition
+
+        Object		 Place/Sanya
+        Object		 Place/Kashi
+        Object		 Place/Jiamusi
+        Type		 Constellation
+        FromOperator		 Or
+        FromOrder		 1
+        ToOperator		 Or
+        ToOrder		 1
+        ToParentConstraint		 AnyParent
+        FromParentConstraint		 AnyParent
+
+    END Definition
+
+    BEGIN Extensions
+
+        BEGIN ADFFileData
+        END ADFFileData
+
+        BEGIN Desc
+        END Desc
+
+    END Extensions
+
+END Constellation

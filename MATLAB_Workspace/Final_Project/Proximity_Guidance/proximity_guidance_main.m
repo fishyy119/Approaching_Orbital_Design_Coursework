@@ -64,7 +64,7 @@ best_plan = search_result.best_plan;
 %% 惯性系数值积分验证
 simulation_config = struct();
 simulation_config.segment_step = 10;
-simulation_config.post_insert_duration = target.T / 2;
+simulation_config.post_insert_duration = target.T / 4;
 simulation_config.post_insert_step = 10;
 
 simulation = simulate_impulsive_proximity_guidance_2d( ...
@@ -150,11 +150,11 @@ plot_drho_dv = utils.plotContourMap2D( ...
 %% 图 2：起止调度导数归并最优切入相位颜色图
 colormap_config_drho_theta = struct();
 colormap_config_drho_theta.figure_name = '近距离导引起止调度导数归并最优切入相位颜色图';
-colormap_config_drho_theta.figure_width = 20;
+colormap_config_drho_theta.figure_width = 8;
 colormap_config_drho_theta.aspect_ratio = 0.68;
 colormap_config_drho_theta.title_text = '起点调度导数-终点调度导数归并最优切入相位 \theta_{in} 颜色图';
-colormap_config_drho_theta.xlabel_text = '起点调度导数 drho0 (m/s)';
-colormap_config_drho_theta.ylabel_text = '终点调度导数 drhoT (m/s)';
+colormap_config_drho_theta.xlabel_text = '起点趋近速率 (m/s)';
+colormap_config_drho_theta.ylabel_text = '终点趋近速率 (m/s)';
 colormap_config_drho_theta.colorbar_label = '最优切入相位 \theta_{in} (deg)';
 colormap_config_drho_theta.x_scale = 1;
 colormap_config_drho_theta.y_scale = 1;
@@ -171,7 +171,7 @@ plot_drho_theta = utils.plotColorMap2D( ...
 %% 图 3：最优速度增量-脉冲段数关系图
 lineplot_config_optimal_dv = struct();
 lineplot_config_optimal_dv.figure_name = '近距离导引最优速度增量-脉冲段数关系图';
-lineplot_config_optimal_dv.figure_width = 20;
+lineplot_config_optimal_dv.figure_width = 8;
 lineplot_config_optimal_dv.aspect_ratio = 0.68;
 lineplot_config_optimal_dv.title_text = '最优速度增量指标随脉冲段数 {\itN} 的变化';
 lineplot_config_optimal_dv.xlabel_text = '脉冲段数 {\itN}';
@@ -187,7 +187,7 @@ fig_dv_vs_N = plot_proximity_optimal_dv_vs_N_2d( ...
 %% 图 4：转移时间-最佳总 Δv 关系图
 lineplot_config_dv_time_by_N = struct();
 lineplot_config_dv_time_by_N.figure_name = '近距离导引转移时间-最佳总速度增量关系图';
-lineplot_config_dv_time_by_N.figure_width = 20;
+lineplot_config_dv_time_by_N.figure_width = 8;
 lineplot_config_dv_time_by_N.aspect_ratio = 0.68;
 lineplot_config_dv_time_by_N.title_text = '不同脉冲段数下转移时间-最佳总 \Delta{\itv} 关系图';
 lineplot_config_dv_time_by_N.xlabel_text = '转移时间 {\itT} (min)';

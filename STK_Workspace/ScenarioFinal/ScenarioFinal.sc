@@ -117,6 +117,129 @@ BEGIN Scenario
         Module		 Underseav12.2
     END ScenarioLicenses
 
+    BEGIN QuickReports
+
+        BEGIN Report
+            Name		 Number Of Accesses
+            Type		 Graph
+            BaseDir		 User
+            Style		 Number Of Accesses
+            AGIViewer		 No
+            Instance		 Chain/Chain1
+            BEGIN TimeData
+                BEGIN Section
+                    SectionNumber		 1
+                    SectionType		 2
+                    ShowIntervals		 No
+                    BEGIN IntervalList
+
+                        DateUnitAbrv		 UTCG
+
+                        BEGIN Intervals
+
+"24 Apr 2026 04:00:00.000000000" "25 Apr 2026 04:00:00.000000000"
+                        END Intervals
+
+                    END IntervalList
+
+                    TimeType		 Availability
+                    SamplingType		 Default
+                    TimeBound		 0
+                END Section
+            END TimeData
+            DisplayOnLoad		 No
+            FrameType		 0
+            DockCircleID		 0
+            DockID		 0
+            WindowRectLeft		 608
+            WindowRectTop		 555
+            WindowRectRight		 1647
+            WindowRectBottom		 1240
+        END Report
+
+        BEGIN Report
+            Name		 Number Of Accesses1
+            Type		 Graph
+            BaseDir		 User
+            Style		 Number Of Accesses
+            AGIViewer		 No
+            Instance		 Chain/Chain1
+            BEGIN TimeData
+                BEGIN Section
+                    SectionNumber		 1
+                    SectionType		 2
+                    ShowIntervals		 No
+                    BEGIN IntervalList
+
+                        DateUnitAbrv		 UTCG
+
+                        BEGIN Intervals
+
+"24 Apr 2026 04:00:00.000000000" "25 Apr 2026 04:00:00.000000000"
+                        END Intervals
+
+                    END IntervalList
+
+                    TimeType		 Availability
+                    SamplingType		 Default
+                    TimeBound		 0
+                END Section
+            END TimeData
+            DisplayOnLoad		 No
+            FrameType		 0
+            DockCircleID		 0
+            DockID		 0
+            WindowRectLeft		 608
+            WindowRectTop		 555
+            WindowRectRight		 1318
+            WindowRectBottom		 1240
+        END Report
+
+        BEGIN Report
+            Name		 RIC
+            Type		 Graph
+            BaseDir		 Install
+            Style		 RIC
+            AGIViewer		 No
+            Instance		 Satellite/Satellite4
+            BEGIN TimeData
+                BEGIN Section
+                    SectionNumber		 2
+                    SectionType		 2
+                    ShowIntervals		 No
+                    BEGIN IntervalList
+
+                        DateUnitAbrv		 UTCG
+
+                        BEGIN Intervals
+
+"24 Apr 2026 04:00:00.000000000" "24 Apr 2026 07:26:32.500000000"
+                        END Intervals
+
+                    END IntervalList
+
+                    TimeType		 Availability
+                    SamplingType		 Default
+                    TimeBound		 0
+                END Section
+            END TimeData
+            BEGIN PreDataList
+                BEGIN PreData
+                    ServiceName		 Ric
+                    Data		 Satellite/Satellite1
+                END PreData
+            END PreDataList
+            DisplayOnLoad		 No
+            FrameType		 0
+            DockCircleID		 0
+            DockID		 0
+            WindowRectLeft		 1165
+            WindowRectTop		 479
+            WindowRectRight		 1879
+            WindowRectBottom		 1082
+        END Report
+    END QuickReports
+
     BEGIN Extensions
 
         BEGIN ClsApp
@@ -356,6 +479,185 @@ BEGIN Scenario
         END ConnectReportUnits
 
         BEGIN ReportFavorites
+            BEGIN Class
+                Name		 Chain
+                BEGIN Favorite
+                    Type		 Graph
+                    BaseDir		 User
+                    Style		 Number Of Accesses
+                END Favorite
+                BEGIN Favorite
+                    Type		 Graph
+                    BaseDir		 Install
+                    Style		 Complete Chain Access
+                END Favorite
+                BEGIN Favorite
+                    Type		 Graph
+                    BaseDir		 Install
+                    Style		 Individual Strand Access
+                END Favorite
+                BEGIN Favorite
+                    Type		 Graph
+                    BaseDir		 Install
+                    Style		 Individual Object Access
+                END Favorite
+            END Class
+            BEGIN Class
+                Name		 AdvCAT
+                BEGIN Favorite
+                    Type		 Report
+                    BaseDir		 Install
+                    Style		 Encounter Warnings
+                END Favorite
+                BEGIN Favorite
+                    Type		 Report
+                    BaseDir		 Install
+                    Style		 Custom
+                END Favorite
+                BEGIN Favorite
+                    Type		 Report
+                    BaseDir		 Install
+                    Style		 Close Approach By Min Range
+                END Favorite
+                BEGIN Favorite
+                    Type		 Report
+                    BaseDir		 Install
+                    Style		 Close Approach By Time In
+                END Favorite
+                BEGIN Favorite
+                    Type		 Report
+                    BaseDir		 Install
+                    Style		 Close Approach By Min Sep
+                END Favorite
+                BEGIN Favorite
+                    Type		 Report
+                    BaseDir		 Install
+                    Style		 Primary Veh List
+                END Favorite
+            END Class
+            BEGIN Class
+                Name		 Satellite
+                BEGIN Favorite
+                    Type		 Graph
+                    BaseDir		 Install
+                    Style		 Close Approach Periods
+                END Favorite
+                BEGIN Favorite
+                    Type		 Graph
+                    BaseDir		 Install
+                    Style		 RIC
+                END Favorite
+                BEGIN Favorite
+                    Type		 Report
+                    BaseDir		 Install
+                    Style		 Maneuver Summary
+                END Favorite
+                BEGIN Favorite
+                    Type		 Report
+                    BaseDir		 Install
+                    Style		 TLE
+                END Favorite
+                BEGIN Favorite
+                    Type		 Graph
+                    BaseDir		 Install
+                    Style		 Model Area
+                END Favorite
+                BEGIN Favorite
+                    Type		 Report
+                    BaseDir		 Install
+                    Style		 Propagator Inputs
+                END Favorite
+                BEGIN Favorite
+                    Type		 Report
+                    BaseDir		 Install
+                    Style		 Generated TLE
+                END Favorite
+                BEGIN Favorite
+                    Type		 Report
+                    BaseDir		 Install
+                    Style		 Inertial Acceleration
+                END Favorite
+                BEGIN Favorite
+                    Type		 Report
+                    BaseDir		 Install
+                    Style		 Fixed LLR Position
+                END Favorite
+                BEGIN Favorite
+                    Type		 Graph
+                    BaseDir		 Install
+                    Style		 Fixed Position Velocity
+                END Favorite
+                BEGIN Favorite
+                    Type		 Report
+                    BaseDir		 Install
+                    Style		 Astrogator Log
+                END Favorite
+                BEGIN Favorite
+                    Type		 Graph
+                    BaseDir		 Install
+                    Style		 Lifetime
+                END Favorite
+                BEGIN Favorite
+                    Type		 Graph
+                    BaseDir		 Install
+                    Style		 Lifetime Space Weather
+                END Favorite
+                BEGIN Favorite
+                    Type		 Graph
+                    BaseDir		 Install
+                    Style		 LLA Position
+                END Favorite
+                BEGIN Favorite
+                    Type		 Graph
+                    BaseDir		 Install
+                    Style		 Yaw Pitch Roll
+                END Favorite
+                BEGIN Favorite
+                    Type		 Report
+                    BaseDir		 Install
+                    Style		 Sun
+                END Favorite
+                BEGIN Favorite
+                    Type		 Graph
+                    BaseDir		 Install
+                    Style		 Sunlight Intervals
+                END Favorite
+                BEGIN Favorite
+                    Type		 Graph
+                    BaseDir		 Install
+                    Style		 Solar Elevation - Body Fixed
+                END Favorite
+                BEGIN Favorite
+                    Type		 Graph
+                    BaseDir		 Install
+                    Style		 Solar AER
+                END Favorite
+                BEGIN Favorite
+                    Type		 Graph
+                    BaseDir		 Install
+                    Style		 Sun Vector Fixed
+                END Favorite
+                BEGIN Favorite
+                    Type		 Report
+                    BaseDir		 Install
+                    Style		 Umbra
+                END Favorite
+                BEGIN Favorite
+                    Type		 Graph
+                    BaseDir		 Install
+                    Style		 Beta Angle
+                END Favorite
+                BEGIN Favorite
+                    Type		 Report
+                    BaseDir		 Install
+                    Style		 Astrogator Script Summary
+                END Favorite
+                BEGIN Favorite
+                    Type		 Report
+                    BaseDir		 Install
+                    Style		 RIC
+                END Favorite
+            END Class
         END ReportFavorites
 
         BEGIN ADFFileData
@@ -420,6 +722,12 @@ BEGIN Scenario
 
         BEGIN SOCDb
             BEGIN Defaults
+                BEGIN Catalog Cities
+                    BEGIN Criteria Name
+                        Type		 Value
+                        Value		 sanya
+                    END Criteria
+                END Catalog
             END Defaults
         END SOCDb
 
@@ -557,12 +865,6 @@ BEGIN Scenario
         END ExportDataFile
 
         BEGIN Desc
-            BEGIN ShortText
-
-            END ShortText
-            BEGIN LongText
-
-            END LongText
         END Desc
 
         BEGIN RfEnv
@@ -1365,7 +1667,7 @@ BEGIN Scenario
 
                 StartTime		 24 Apr 2026 04:00:00.000000000
                 EndTime		 25 Apr 2026 04:00:00.000000000
-                CurrentTime		 24 Apr 2026 04:00:00.000000000
+                CurrentTime		 24 Apr 2026 19:11:29.353000000
                 Direction		 Forward
                 UpdateDelta		 10
                 RefreshDelta		 0.010000
@@ -1451,7 +1753,7 @@ BEGIN Scenario
                         PrimaryBody		 Earth
                         SecondaryBody		 Sun
                         CenterLatitude		 0
-                        CenterLongitude		 0
+                        CenterLongitude		 139.8664886515353
                         ProjectionAltitude		 63621860
                         FieldOfView		 35
                         OrthoDisplayDistance		 20000000
@@ -1488,7 +1790,7 @@ BEGIN Scenario
                         BEGIN ZoomLocations
                             BEGIN ZoomLocation
                                 CenterLat		 0
-                                CenterLon		 0
+                                CenterLon		 139.8664886515353
                                 ZoomWidth		 360
                                 ZoomHeight		 180
                             END ZoomLocation
@@ -2172,11 +2474,79 @@ BEGIN Scenario
 
     BEGIN SubObjects
 
+        Class AdvCAT
+
+            AdvCAT1		
+
+        END Class
+
+        Class Chain
+
+            Chain1		
+
+        END Class
+
+        Class Constellation
+
+            Constellation1		
+
+        END Class
+
+        Class Place
+
+            Jiamusi		
+            Kashi		
+            Sanya		
+
+        END Class
+
+        Class Satellite
+
+            Satellite1		
+            Satellite2		
+            Satellite4		
+
+        END Class
+
     END SubObjects
 
     BEGIN References
         Instance *
             *		
+            Chain/Chain1		
+            Constellation/Constellation1		
+        END Instance
+        Instance AdvCAT/AdvCAT1
+        END Instance
+        Instance Chain/Chain1
+            Chain/Chain1		
+        END Instance
+        Instance Constellation/Constellation1
+            Chain/Chain1		
+        END Instance
+        Instance Place/Jiamusi
+            Constellation/Constellation1		
+            Place/Jiamusi		
+        END Instance
+        Instance Place/Kashi
+            Constellation/Constellation1		
+            Place/Kashi		
+        END Instance
+        Instance Place/Sanya
+            Constellation/Constellation1		
+            Place/Sanya		
+        END Instance
+        Instance Satellite/Satellite1
+            *		
+            AdvCAT/AdvCAT1		
+            Satellite/Satellite1		
+        END Instance
+        Instance Satellite/Satellite2
+            Chain/Chain1		
+            Satellite/Satellite2		
+        END Instance
+        Instance Satellite/Satellite4
+            Satellite/Satellite4		
         END Instance
     END References
 

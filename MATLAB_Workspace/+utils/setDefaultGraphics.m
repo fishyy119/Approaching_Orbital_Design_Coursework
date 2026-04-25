@@ -6,7 +6,7 @@ if nargin < 1 || isempty(english_font_name)
 end
 
 if nargin < 2 || isempty(font_size)
-    font_size = 10;
+    font_size = 9;
 end
 
 if nargin < 3 || isempty(chinese_font_name)

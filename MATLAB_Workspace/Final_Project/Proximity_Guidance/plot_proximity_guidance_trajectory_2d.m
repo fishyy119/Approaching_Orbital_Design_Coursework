@@ -7,7 +7,7 @@ end
 
 fig = utils.createFigureA4(struct( ...
     'Name', '近距离导引相对系轨迹', ...
-    'Width', 20, ...
+    'Width', 8, ...
     'AspectRatio', 0.75));
 ax = axes('Parent', fig);
 hold(ax, 'on');
@@ -97,6 +97,6 @@ ylim(ax, y_range_km + [-pad_y, pad_y]);
 xlabel(ax, utils.formatMixedFontText('LVLH x (km)'));
 ylabel(ax, utils.formatMixedFontText('LVLH y (km)'));
 utils.applyPlotTitle(ax, utils.formatMixedFontText('近距离导引与切入后绕飞轨迹'));
-legend(ax, 'Location', 'bestoutside');
+% legend(ax, 'Location', 'bestoutside');
 
 end

@@ -36,7 +36,7 @@ for i_N = 1:numel(summary.N_list)
 end
 
 grid(ax, 'on');
-grid(ax, 'minor');
+% grid(ax, 'minor');
 box(ax, 'on');
 
 if valid_line_count == 0
