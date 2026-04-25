@@ -60,6 +60,8 @@ rhodot_cap_L = [0; 0]; % 先对准为静止捕获点
 %% 搜索网格
 td_min = 0;
 td_max = 1.5 * target.T;
+% td_min = 9 * target.T;
+% td_max = 10.5 * target.T;
 dt_min = 10 * 60;
 dt_max = 1.2 * target.T;
 td_step = 60;
@@ -187,6 +189,9 @@ simulation_result = [];
 simulation_config = struct();
 
 if isfinite(best.dv_total)
+    best.dv1_vec_vnc = projectVectorToVnc2D(best.dv1_vec, best.r1, best.v1_nom);
+    best.dv2_vec_vnc = projectVectorToVnc2D(best.dv2_vec, best.r2, best.v2_tr);
+
     simulation_config.wait_step = 30; % s
     simulation_config.transfer_step = 20; % s
     simulation_config.reference_orbit_samples = 720;
@@ -194,6 +199,8 @@ if isfinite(best.dv_total)
     simulation_result = simulate_impulsive_remote_guidance_2d( ...
         mu, Re, target, chaser, best, rho_cap_L, rhodot_cap_L, simulation_config);
 else
+    best.dv1_vec_vnc = nan(2, 1);
+    best.dv2_vec_vnc = nan(2, 1);
     warning('当前搜索网格内未找到满足转移弧段高度约束的 Lambert 可行解。');
 end
 
@@ -214,6 +221,10 @@ if isfinite(best.dv_total)
     fprintf('Δv1 = %.4f m/s\n', best.dv1);
     fprintf('Δv2 = %.4f m/s\n', best.dv2);
     fprintf('Δv_total = %.4f m/s\n', best.dv_total);
+    fprintf('Δv1 在 VNC 系（二维 V-C 分量）下 = [%.4f %.4f] m/s\n', ...
+        best.dv1_vec_vnc(1), best.dv1_vec_vnc(2));
+    fprintf('Δv2 在 VNC 系（二维 V-C 分量）下 = [%.4f %.4f] m/s\n', ...
+        best.dv2_vec_vnc(1), best.dv2_vec_vnc(2));
     fprintf('到达脉冲前相对速度 = %.4f m/s\n', best.arrival_rel_speed);
     fprintf('转移弧段最低高度 = %.2f km\n', (best.rmin_tr - Re) / 1e3);
 
@@ -229,7 +240,7 @@ end
 %% 图 1：远程导引 Lambert 窗口等高线图
 contour_plot_config = struct();
 contour_plot_config.figure_name = '远程导引 Lambert 窗口等高线图';
-contour_plot_config.figure_width = 20;
+contour_plot_config.figure_width = 8;
 contour_plot_config.aspect_ratio = 0.68;
 contour_plot_config.title_text = '二维共面远程导引 Lambert 窗口等高线图';
 contour_plot_config.xlabel_text = '出发时刻 {\itt}_{\itd} (h)';
@@ -294,8 +305,52 @@ remote_result.num_total_cells = num_total_cells;
 remote_result.num_safe_cells = num_safe_cells;
 remote_result.safe_ratio = safe_ratio;
 remote_result.best = best;
+remote_result.impulses_vnc = struct( ...
+    'dv1_vec', best.dv1_vec_vnc, ...
+    'dv2_vec', best.dv2_vec_vnc, ...
+    'component_order', ["V", "C"]);
 remote_result.contour_plot = contour_plot_info;
 remote_result.simulation = simulation_result;
 remote_result.simulation_config = simulation_config;
 remote_result.trajectory_figure = fig_remote_trajectory;
 remote_result.animation = animation_info;
+
+%% 局部函数
+
+function vector_vnc_2d = projectVectorToVnc2D(vector_inertial, position_inertial, velocity_inertial)
+% projectVectorToVnc2D 将二维惯性系向量投影到机动时刻的二维 VNC 坐标。
+%
+% 输出按 [V; C] 排列：
+%   V 沿瞬时速度方向；
+%   C 为与 V、轨道法向组成右手系的面内共法向方向。
+
+arguments
+    vector_inertial (2,1) double
+    position_inertial (2,1) double
+    velocity_inertial (2,1) double
+end
+
+velocity_norm = norm(velocity_inertial);
+if velocity_norm <= 0
+    error('projectVectorToVnc2D:ZeroVelocity', ...
+        'VNC 坐标系要求参考速度非零。');
+end
+
+orbit_normal_z = position_inertial(1) * velocity_inertial(2) ...
+    - position_inertial(2) * velocity_inertial(1);
+normal_threshold = eps(max(norm(position_inertial) * velocity_norm, 1));
+
+if abs(orbit_normal_z) <= normal_threshold
+    error('projectVectorToVnc2D:UndefinedNormal', ...
+        'VNC 坐标系要求轨道法向可定义。');
+end
+
+velocity_hat = velocity_inertial / velocity_norm;
+normal_sign = sign(orbit_normal_z);
+co_normal_hat = normal_sign * [velocity_hat(2); -velocity_hat(1)];
+
+vector_vnc_2d = [ ...
+    dot(vector_inertial, velocity_hat); ...
+    dot(vector_inertial, co_normal_hat)];
+
+end

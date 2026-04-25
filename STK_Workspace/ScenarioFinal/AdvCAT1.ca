@@ -1,0 +1,201 @@
+stk.v.12.0
+WrittenBy    STK_v12.2.0
+
+BEGIN AdvCAT
+
+    Name		 AdvCAT1
+
+    BEGIN Interval
+
+        StartTime		 24 Apr 2026 04:00:00.000000000
+        StopTime		 25 Apr 2026 04:00:00.000000000
+        AnalysisWindowPtr		
+        BEGIN EVENTINTERVAL
+            EventInterval		
+            BEGIN EVENTINTERVAL
+                Type		 EVENTINTERVAL_LINKTO
+                Name		 AnalysisInterval
+                AbsolutePath		 Scenario
+            END EVENTINTERVAL
+            IntervalState		 Implicit
+        END EVENTINTERVAL
+
+        DisplayComputeAck		 Yes
+        PntToPntOverride		 YES
+        MsgAlertOnHit		 No
+        ForceRePropOnSatFileLoad		 No
+        AllowPartialEphemeris		 No
+        RemoveSecondaryBySSC		 Yes
+        MinSampleStepSize		  1.0000000000000000e+00
+        MaxSampleStepSize		  3.0000000000000000e+02
+        ComputeOnLoad		 No
+
+    END Interval
+
+
+    BEGIN FilterSettings
+
+        Threshold		  1.0000000000000000e+04
+        ApogeePerigeePad		  3.0000000000000000e+04
+        OrbitPathPad		  1.0000000000000000e+05
+        TimeDistancePad		  3.0000000000000000e+04
+        OutOfDateDuration		  2.5920000000000000e+06
+        UseOutOfDateFilter		 No
+        UseApogeePerigeeFilter		 Yes
+        UsePathFilter		 No
+        UseTimeFilter		 Yes
+
+    END FilterSettings
+
+    BEGIN ProbabilityData
+
+        Resolution		  1.0000000000000001e-01
+        AngleLimit		  1.0000000000000000e+00
+        SigmaLimit		  2.5000000000000000e-01
+        SigmaFinal		  4.0000000000000000e+00
+        FractionalProbLimit		  5.0000000000000003e-02
+        MaxTimeStep		  1.0000000000000000e+01
+        HalfTimeSpan		  0.0000000000000000e+00
+
+    END ProbabilityData
+
+
+    BEGIN GlobalEllipsoidProperties
+
+        ScaleFactor		  1.0000000000000000e+00
+        QuadraticDB		 stkQuadDB.qdb
+        FixedByOrbitClassDB		 stkFxdOrbCls.foc
+        QuadraticByOrbitClassDB		 stkQuadOrbCls.qoc
+        CrossReferenceDB		 stkAllTLE.sd
+        UseCrossRefDb		 No
+
+    END GlobalEllipsoidProperties
+
+    BEGIN LogFileSettings
+
+        OutputToLogFile		 No
+        BufferOutput		 Yes
+        FileMode		 Overwrite
+
+    END LogFileSettings
+
+
+    BEGIN RelationFile
+
+        RelationFileName		 commonRelatedObjects.rel
+        UseRelFile		 No
+
+    END RelationFile
+
+    BEGIN SSCHardBodyRadFile
+
+        UseSSCFile		 No
+
+    END SSCHardBodyRadFile
+
+    BEGIN Primaries
+
+
+        BEGIN DefaultEllipsoid
+
+            Tangential		  2.0000000000000000e+04
+            CrossTrack		  1.0000000000000000e+04
+            Normal		  5.0000000000000000e+03
+            EllipsoidType		 Fixed
+
+        END DefaultEllipsoid
+
+
+        BEGIN GPElemFile
+            Name		 stkAllComm.tce
+            Tangential		  2.0000000000000000e+04
+            CrossTrack		  1.0000000000000000e+04
+            Normal		  5.0000000000000000e+03
+            EllipsoidType		 Fixed
+            HardBodyRadius		 1
+            NumberID		 0
+
+        END GPElemFile
+
+        BEGIN GPElemFile
+            Name		 stkAllTLE.tce
+            Tangential		  2.0000000000000000e+04
+            CrossTrack		  1.0000000000000000e+04
+            Normal		  5.0000000000000000e+03
+            EllipsoidType		 Fixed
+            HardBodyRadius		 1
+            NumberID		 0
+
+        END GPElemFile
+
+        BEGIN GPElemFile
+            Name		 stkSatDb.tce
+            Tangential		  2.0000000000000000e+04
+            CrossTrack		  1.0000000000000000e+04
+            Normal		  5.0000000000000000e+03
+            EllipsoidType		 Fixed
+            HardBodyRadius		 1
+            NumberID		 0
+
+        END GPElemFile
+
+        BEGIN GPElemFile
+            Name		 stkSatDbAll.tce
+            Tangential		  2.0000000000000000e+04
+            CrossTrack		  1.0000000000000000e+04
+            Normal		  5.0000000000000000e+03
+            EllipsoidType		 Fixed
+            HardBodyRadius		 1
+            NumberID		 0
+
+        END GPElemFile
+
+    END Primaries
+
+    BEGIN Secondaries
+
+
+        BEGIN DefaultEllipsoid
+
+            Tangential		  2.0000000000000000e+04
+            CrossTrack		  1.0000000000000000e+04
+            Normal		  5.0000000000000000e+03
+            EllipsoidType		 Fixed
+
+        END DefaultEllipsoid
+
+
+        BEGIN Satellite
+            Name		 Satellite1.sa
+            Tangential		  2.0000000000000000e+04
+            CrossTrack		  1.0000000000000000e+04
+            Normal		  5.0000000000000000e+03
+            EllipsoidType		 Fixed
+            HardBodyRadius		 1
+            NumberID		 0
+
+        END Satellite
+
+    END Secondaries
+
+    BEGIN Extensions
+
+        BEGIN ADFFileData
+        END ADFFileData
+
+        BEGIN Desc
+            BEGIN ShortText
+
+            END ShortText
+            BEGIN LongText
+
+            END LongText
+        END Desc
+
+        BEGIN VO
+        END VO
+
+    END Extensions
+
+END AdvCAT
+

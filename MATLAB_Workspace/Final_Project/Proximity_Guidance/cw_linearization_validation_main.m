@@ -25,7 +25,7 @@ target.radius = Re + 1000e3;
 target.theta0 = 80 * deg;
 target.t0 = 0;
 target.n = sqrt(mu / target.radius^3);
-target.T = 20 * pi / target.n;
+target.T = 2 * pi / target.n;
 
 %% 初始相对状态
 initial_relative = struct();
