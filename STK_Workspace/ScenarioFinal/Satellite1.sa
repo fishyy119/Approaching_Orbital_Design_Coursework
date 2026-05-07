@@ -1909,6 +1909,12 @@ BEGIN Satellite
         END ObjectCoverage
 
         BEGIN Desc
+            BEGIN ShortText
+
+            END ShortText
+            BEGIN LongText
+
+            END LongText
         END Desc
 
         BEGIN RadarCrossSection
@@ -1998,6 +2004,32 @@ BEGIN Satellite
         END Identification
 
         BEGIN Crdn
+            BEGIN VECTOR
+                Type		 VECTOR_DISP
+                Name		 Vec12
+                Description		 <Enter description (up to 300 chars)>
+                Origin		
+                BEGIN POINT
+                    Type		 POINT_LINKTO
+                    Name		 Center
+                END POINT
+                Destination		
+                BEGIN POINT
+                    Type		 POINT_LINKTO
+                    Name		 Center
+                    RelativePath		 Satellite/Satellite4
+                END POINT
+                LTDRefSystem		
+                BEGIN SYSTEM
+                    Type		 SYSTEM_LINKTO
+                    Name		 Inertial
+                    AbsolutePath		 CentralBody/Earth
+                END SYSTEM
+                Apparent		 No
+                TimeConvergence		  1.0000000000000000e-03
+                TimeSense		 Receive
+                IgnoreAberration		 Yes
+            END VECTOR
         END Crdn
 
         BEGIN SpaceEnvironment

@@ -42,7 +42,7 @@ orbit.yc = 0;
 
 %% 多脉冲趋近与切入相位搜索参数
 search_config = struct();
-search_config.N_list = 5:5;
+search_config.N_list = 3:3;
 search_config.drho0_list = utils.buildGradedList( ...
     [-12, -8, -4, -1.5], ...
     [8, 8, 8]);

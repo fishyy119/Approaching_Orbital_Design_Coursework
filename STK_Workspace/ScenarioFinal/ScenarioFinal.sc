@@ -68,8 +68,6 @@ BEGIN Scenario
 
             BEGIN StreamingTerrain
                 UseCurrentStreamingTerrainServer		 Yes
-                CurrentStreamingTerrainServerName		 http://twsusecovacc01.agi.com/stk-terrain/
-                StreamingTerrainTilesetName		 world
                 StreamingTerrainServerName		 assets.agi.com/stk-terrain/
                 StreamingTerrainAzimuthElevationMaskEnabled		 No
                 StreamingTerrainObscurationEnabled		 No
@@ -483,13 +481,8 @@ BEGIN Scenario
                 Name		 Chain
                 BEGIN Favorite
                     Type		 Graph
-                    BaseDir		 User
-                    Style		 Number Of Accesses
-                END Favorite
-                BEGIN Favorite
-                    Type		 Graph
                     BaseDir		 Install
-                    Style		 Complete Chain Access
+                    Style		 Individual Object Access
                 END Favorite
                 BEGIN Favorite
                     Type		 Graph
@@ -499,7 +492,185 @@ BEGIN Scenario
                 BEGIN Favorite
                     Type		 Graph
                     BaseDir		 Install
-                    Style		 Individual Object Access
+                    Style		 Complete Chain Access
+                END Favorite
+                BEGIN Favorite
+                    Type		 Graph
+                    BaseDir		 User
+                    Style		 Number Of Accesses
+                END Favorite
+            END Class
+            BEGIN Class
+                Name		 Satellite
+                BEGIN Favorite
+                    Type		 Graph
+                    BaseDir		 User
+                    Style		 Vec12
+                END Favorite
+                BEGIN Favorite
+                    Type		 Report
+                    BaseDir		 Install
+                    Style		 Umbra
+                END Favorite
+                BEGIN Favorite
+                    Type		 Report
+                    BaseDir		 Install
+                    Style		 Lunar Vector J2000
+                END Favorite
+                BEGIN Favorite
+                    Type		 Graph
+                    BaseDir		 Install
+                    Style		 J2000 Position Velocity
+                END Favorite
+                BEGIN Favorite
+                    Type		 Graph
+                    BaseDir		 Install
+                    Style		 Close Approach Periods
+                END Favorite
+                BEGIN Favorite
+                    Type		 Report
+                    BaseDir		 Install
+                    Style		 Close Approach
+                END Favorite
+                BEGIN Favorite
+                    Type		 Graph
+                    BaseDir		 Install
+                    Style		 Eclipse Times
+                END Favorite
+                BEGIN Favorite
+                    Type		 Report
+                    BaseDir		 Install
+                    Style		 Eclipse Times
+                END Favorite
+                BEGIN Favorite
+                    Type		 Report
+                    BaseDir		 Install
+                    Style		 Eclipse Summary
+                END Favorite
+                BEGIN Favorite
+                    Type		 Graph
+                    BaseDir		 Install
+                    Style		 Sunlight Intervals
+                END Favorite
+                BEGIN Favorite
+                    Type		 Report
+                    BaseDir		 Install
+                    Style		 Sun
+                END Favorite
+                BEGIN Favorite
+                    Type		 Graph
+                    BaseDir		 Install
+                    Style		 Sun Vector Fixed
+                END Favorite
+                BEGIN Favorite
+                    Type		 Graph
+                    BaseDir		 Install
+                    Style		 Solar Panel Area
+                END Favorite
+                BEGIN Favorite
+                    Type		 Graph
+                    BaseDir		 Install
+                    Style		 Solar Elevation - Body Fixed
+                END Favorite
+                BEGIN Favorite
+                    Type		 Graph
+                    BaseDir		 Install
+                    Style		 SEET Temperature
+                END Favorite
+                BEGIN Favorite
+                    Type		 Graph
+                    BaseDir		 Install
+                    Style		 Solar AER
+                END Favorite
+                BEGIN Favorite
+                    Type		 Graph
+                    BaseDir		 Install
+                    Style		 Classical Orbit Elements
+                END Favorite
+                BEGIN Favorite
+                    Type		 Report
+                    BaseDir		 Install
+                    Style		 RIC
+                END Favorite
+                BEGIN Favorite
+                    Type		 Report
+                    BaseDir		 Install
+                    Style		 Astrogator Script Summary
+                END Favorite
+                BEGIN Favorite
+                    Type		 Graph
+                    BaseDir		 Install
+                    Style		 Beta Angle
+                END Favorite
+                BEGIN Favorite
+                    Type		 Graph
+                    BaseDir		 Install
+                    Style		 Yaw Pitch Roll
+                END Favorite
+                BEGIN Favorite
+                    Type		 Graph
+                    BaseDir		 Install
+                    Style		 LLA Position
+                END Favorite
+                BEGIN Favorite
+                    Type		 Graph
+                    BaseDir		 Install
+                    Style		 Lifetime Space Weather
+                END Favorite
+                BEGIN Favorite
+                    Type		 Graph
+                    BaseDir		 Install
+                    Style		 Lifetime
+                END Favorite
+                BEGIN Favorite
+                    Type		 Report
+                    BaseDir		 Install
+                    Style		 Astrogator Log
+                END Favorite
+                BEGIN Favorite
+                    Type		 Graph
+                    BaseDir		 Install
+                    Style		 Fixed Position Velocity
+                END Favorite
+                BEGIN Favorite
+                    Type		 Report
+                    BaseDir		 Install
+                    Style		 Fixed LLR Position
+                END Favorite
+                BEGIN Favorite
+                    Type		 Report
+                    BaseDir		 Install
+                    Style		 Inertial Acceleration
+                END Favorite
+                BEGIN Favorite
+                    Type		 Report
+                    BaseDir		 Install
+                    Style		 Generated TLE
+                END Favorite
+                BEGIN Favorite
+                    Type		 Report
+                    BaseDir		 Install
+                    Style		 Propagator Inputs
+                END Favorite
+                BEGIN Favorite
+                    Type		 Graph
+                    BaseDir		 Install
+                    Style		 Model Area
+                END Favorite
+                BEGIN Favorite
+                    Type		 Report
+                    BaseDir		 Install
+                    Style		 TLE
+                END Favorite
+                BEGIN Favorite
+                    Type		 Report
+                    BaseDir		 Install
+                    Style		 Maneuver Summary
+                END Favorite
+                BEGIN Favorite
+                    Type		 Graph
+                    BaseDir		 Install
+                    Style		 RIC
                 END Favorite
             END Class
             BEGIN Class
@@ -512,7 +683,12 @@ BEGIN Scenario
                 BEGIN Favorite
                     Type		 Report
                     BaseDir		 Install
-                    Style		 Custom
+                    Style		 Primary Veh List
+                END Favorite
+                BEGIN Favorite
+                    Type		 Report
+                    BaseDir		 Install
+                    Style		 Close Approach By Min Sep
                 END Favorite
                 BEGIN Favorite
                     Type		 Report
@@ -527,135 +703,7 @@ BEGIN Scenario
                 BEGIN Favorite
                     Type		 Report
                     BaseDir		 Install
-                    Style		 Close Approach By Min Sep
-                END Favorite
-                BEGIN Favorite
-                    Type		 Report
-                    BaseDir		 Install
-                    Style		 Primary Veh List
-                END Favorite
-            END Class
-            BEGIN Class
-                Name		 Satellite
-                BEGIN Favorite
-                    Type		 Graph
-                    BaseDir		 Install
-                    Style		 Close Approach Periods
-                END Favorite
-                BEGIN Favorite
-                    Type		 Graph
-                    BaseDir		 Install
-                    Style		 RIC
-                END Favorite
-                BEGIN Favorite
-                    Type		 Report
-                    BaseDir		 Install
-                    Style		 Maneuver Summary
-                END Favorite
-                BEGIN Favorite
-                    Type		 Report
-                    BaseDir		 Install
-                    Style		 TLE
-                END Favorite
-                BEGIN Favorite
-                    Type		 Graph
-                    BaseDir		 Install
-                    Style		 Model Area
-                END Favorite
-                BEGIN Favorite
-                    Type		 Report
-                    BaseDir		 Install
-                    Style		 Propagator Inputs
-                END Favorite
-                BEGIN Favorite
-                    Type		 Report
-                    BaseDir		 Install
-                    Style		 Generated TLE
-                END Favorite
-                BEGIN Favorite
-                    Type		 Report
-                    BaseDir		 Install
-                    Style		 Inertial Acceleration
-                END Favorite
-                BEGIN Favorite
-                    Type		 Report
-                    BaseDir		 Install
-                    Style		 Fixed LLR Position
-                END Favorite
-                BEGIN Favorite
-                    Type		 Graph
-                    BaseDir		 Install
-                    Style		 Fixed Position Velocity
-                END Favorite
-                BEGIN Favorite
-                    Type		 Report
-                    BaseDir		 Install
-                    Style		 Astrogator Log
-                END Favorite
-                BEGIN Favorite
-                    Type		 Graph
-                    BaseDir		 Install
-                    Style		 Lifetime
-                END Favorite
-                BEGIN Favorite
-                    Type		 Graph
-                    BaseDir		 Install
-                    Style		 Lifetime Space Weather
-                END Favorite
-                BEGIN Favorite
-                    Type		 Graph
-                    BaseDir		 Install
-                    Style		 LLA Position
-                END Favorite
-                BEGIN Favorite
-                    Type		 Graph
-                    BaseDir		 Install
-                    Style		 Yaw Pitch Roll
-                END Favorite
-                BEGIN Favorite
-                    Type		 Report
-                    BaseDir		 Install
-                    Style		 Sun
-                END Favorite
-                BEGIN Favorite
-                    Type		 Graph
-                    BaseDir		 Install
-                    Style		 Sunlight Intervals
-                END Favorite
-                BEGIN Favorite
-                    Type		 Graph
-                    BaseDir		 Install
-                    Style		 Solar Elevation - Body Fixed
-                END Favorite
-                BEGIN Favorite
-                    Type		 Graph
-                    BaseDir		 Install
-                    Style		 Solar AER
-                END Favorite
-                BEGIN Favorite
-                    Type		 Graph
-                    BaseDir		 Install
-                    Style		 Sun Vector Fixed
-                END Favorite
-                BEGIN Favorite
-                    Type		 Report
-                    BaseDir		 Install
-                    Style		 Umbra
-                END Favorite
-                BEGIN Favorite
-                    Type		 Graph
-                    BaseDir		 Install
-                    Style		 Beta Angle
-                END Favorite
-                BEGIN Favorite
-                    Type		 Report
-                    BaseDir		 Install
-                    Style		 Astrogator Script Summary
-                END Favorite
-                BEGIN Favorite
-                    Type		 Report
-                    BaseDir		 Install
-                    Style		 RIC
+                    Style		 Custom
                 END Favorite
             END Class
         END ReportFavorites
@@ -1667,7 +1715,7 @@ BEGIN Scenario
 
                 StartTime		 24 Apr 2026 04:00:00.000000000
                 EndTime		 25 Apr 2026 04:00:00.000000000
-                CurrentTime		 24 Apr 2026 19:11:29.353000000
+                CurrentTime		 24 Apr 2026 05:11:30.659000000
                 Direction		 Forward
                 UpdateDelta		 10
                 RefreshDelta		 0.010000
@@ -1779,7 +1827,7 @@ BEGIN Scenario
                         Resolution		 VeryLow
                         CoordinateSys		 ECF
                         UseBackgroundImage		 On
-                        UseBingForBackground		 On
+                        UseBingForBackground		 Off
                         BingType		 Aerial
                         BingLogoHorizAlign		 Right
                         BingLogoVertAlign		 Bottom
@@ -2000,7 +2048,7 @@ BEGIN Scenario
                             Resolution		 VeryLow
                             CoordinateSys		 ECF
                             UseBackgroundImage		 On
-                            UseBingForBackground		 On
+                            UseBingForBackground		 Off
                             BingType		 Aerial
                             BingLogoHorizAlign		 Right
                             BingLogoVertAlign		 Bottom
@@ -2538,7 +2586,6 @@ BEGIN Scenario
         END Instance
         Instance Satellite/Satellite1
             *		
-            AdvCAT/AdvCAT1		
             Satellite/Satellite1		
         END Instance
         Instance Satellite/Satellite2

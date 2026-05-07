@@ -33955,7 +33955,7 @@ BEGIN Satellite
             END GenericGraphics
 
             BEGIN AttributeData
-                ShowGfx		 Off
+                ShowGfx		 On
                 AttributeType		                CustomIntervals		
                 BEGIN DefaultAttributes
                     Show		 On

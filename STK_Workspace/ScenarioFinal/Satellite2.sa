@@ -3827,7 +3827,7 @@ BEGIN Satellite
                                                                                     </VAR>
                                                                                     <VAR name = "Z">
                                                                                         <QUANTITY Dimension = "Rate" Unit = "m*sec^-1">
-                                                                                            <REAL>3.603900000000001</REAL>
+                                                                                            <REAL>3.603900000000007</REAL>
                                                                                         </QUANTITY>
                                                                                     </VAR>
                                                                                 </SCOPE>
@@ -15946,9 +15946,9 @@ BEGIN Satellite
             MaxSatsToCreate		 500
             UseModelScale		 No
             ModelScale		 0
-            UseCrossRefDb		 Yes
-            CollisionDB		 stkAllTLE.tce
-            CollisionCrossRefDB		 stkAllTLE.sd
+            UseCrossRefDb		 No 
+            CollisionDB		 stkAllComm.tce
+            CollisionCrossRefDB		 stkSatDbAll.sd
             ShowLine		 Yes
             AnimHighlight		 Yes
             StaticHighlight		 Yes
@@ -16053,7 +16053,7 @@ BEGIN Satellite
         END ADFFileData
 
         BEGIN AccessConstraints
-            LineOfSight IncludeIntervals
+            Range            Max		  5.0000000000000000e+03 IncludeIntervals
 
             UsePreferredMaxStep No
             PreferredMaxStep 360
@@ -16151,12 +16151,6 @@ BEGIN Satellite
         END ObjectCoverage
 
         BEGIN Desc
-            BEGIN ShortText
-
-            END ShortText
-            BEGIN LongText
-
-            END LongText
         END Desc
 
         BEGIN RadarCrossSection
