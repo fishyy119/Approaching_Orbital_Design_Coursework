@@ -31,3 +31,6 @@ docs/*.pdf
 *.ist
 
 LaTeX_Workspace/build/
+
+# Local private LaTeX metadata
+LaTeX_Workspace/private_identity.tex
